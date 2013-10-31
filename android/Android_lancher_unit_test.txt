@@ -1,0 +1,86 @@
+*** Setting ***    Value
+Library           ./lib/Android_lancher_unit_test.py
+Library	          OperatingSystem
+
+*** Variable ***    Value
+${PASS}				PASS
+${INDEX}			1
+
+*** Test Case ***     		Step                        	Argument
+
+
+
+
+
+
+
+ 
+
+
+android lancher functional testing case 0	           TEST CASE			${0} 
+android lancher functional testing case 1	           TEST CASE			${1} 
+android lancher functional testing case 2	           TEST CASE			${2} 
+android lancher functional testing case 3	           TEST CASE			${3}  
+android lancher functional testing case 4	           TEST CASE			${4} 
+android lancher functional testing case 5	           TEST CASE			${5} 
+android lancher functional testing case 6	           TEST CASE			${6} 
+android lancher functional testing case 7	           TEST CASE			${7} 
+android lancher functional testing case 8	           TEST CASE			${8}
+android lancher functional testing case 9	           TEST CASE			${9} 
+android lancher functional testing case 10	           TEST CASE			${10}
+android lancher functional testing case 11 	       	   TEST CASE			${11} 
+android lancher functional testing case 12	           TEST CASE			${12} 
+android lancher functional testing case 13	           TEST CASE			${13}  
+android lancher functional testing case 14	           TEST CASE			${14} 
+android lancher functional testing case 15	           TEST CASE			${15} 
+android lancher functional testing case 16	           TEST CASE			${16} 
+android lancher functional testing case 17	           TEST CASE			${17} 
+android lancher functional testing case 18	           TEST CASE			${18}
+android lancher functional testing case 19	           TEST CASE			${19} 
+android lancher functional testing case 20	           TEST CASE			${20}
+android lancher functional testing case 21	           TEST CASE			${21} 
+android lancher functional testing case 22	           TEST CASE			${22} 
+android lancher functional testing case 23	           TEST CASE			${23}  
+android lancher functional testing case 24	           TEST CASE			${24} 
+android lancher functional testing case 25	           TEST CASE			${25} 
+android lancher functional testing case 26	           TEST CASE			${26} 
+android lancher functional testing case 27	           TEST CASE			${27} 
+android lancher functional testing case 28	           TEST CASE			${28}
+android lancher functional testing case 29	           TEST CASE			${29} 
+android lancher functional testing case 30	           TEST CASE			${30} 
+android lancher functional testing case 31	           TEST CASE			${31} 
+android lancher functional testing case 32	           TEST CASE			${32} 
+
+	       
+
+
+*** Keyword ***
+Lancher A APP
+    [Arguments]    ${case}
+    ${RESULT} =    Android Lancher Test Unit   ${case}
+    Should Be Equal As Strings    ${RESULT}    ${PASS}
+    
+Lancher A PIP 1
+    [Arguments]    ${case}
+    ${RESULT} =    Android Lancher Test Unit   ${case}
+    Should Be Equal As Strings    ${RESULT}    ${PASS}
+    
+TEST CASE 3
+    [Arguments]    ${case}
+    ${RESULT} =    Android Lancher Test Unit   ${case}
+    Should Be Equal As Strings    ${RESULT}    ${PASS}
+    
+TEST CASE 4
+    [Arguments]    ${case}
+    ${RESULT} =    Android Lancher Test Unit   ${case}
+    Should Be Equal As Strings    ${RESULT}    ${PASS}
+ 
+ TEST CASE 5
+    [Arguments]    ${case}
+    ${RESULT} =    Android Lancher Test Unit   ${case}
+    Should Be Equal As Strings    ${RESULT}    ${PASS}
+ TEST CASE
+    [Arguments]    ${case}
+    ${RESULT} =    Android Lancher Test Unit   ${case}
+    Should Be Equal As Strings    ${RESULT}    ${PASS}
+     	

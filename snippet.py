@@ -1,0 +1,1 @@
+com = serial.Serial(self.port,self.baudrate,timeout=1)

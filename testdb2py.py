@@ -1,4 +1,5 @@
 import sqlite3
+from cpgmgt_service_object import CPGMgt_Service_Object
 #from _threading_local import key
 __CPGMGT_HOME = "/usr/lib/python2.7/site-packages/cpgmgt-service/"
 __LOCAL_CONFIG_DB_PATH = __CPGMGT_HOME + "share/config-database/"
@@ -26,18 +27,18 @@ TEMP_CONFIG_DB = __TEMP_CONFIG_DB_PATH + __CONFIG_DB_NAME
 
 from cpgmgt_common import CPGMgt_ConfigDB
 
-INIT_CONFIG_VALUE = [                            
+
+class test:
+    INIT_CONFIG_VALUE = [                            
                         ['mode4','auto'],
                         ['mode6','auto'],                                    
-                        ['ip4','222'],
-                        ['ip6','333'],
-                        ['via4','444'],
-                        ['via6','555'],
-                        
+                        ['ip4',''],
+                        ['ip6',''],
+                        ['via4',''],
+                        ['via6',''],                        
                         ['dns4',''],
                         ['dns6','']
                             ]
-class test:
     def __init__(self):
         print "test init"
         pass
@@ -50,6 +51,8 @@ class test:
             db = CPGMgt_ConfigDB.LOCAL_CONFIG_DB
         result =  CPGMgt_ConfigDB.get_value_of_database(
             object_name, key=None, value_type="value", db_file=db)
+        print "init date result -->",
+        print result
         if len(result) == len(init_list):
             #donothing 
             return "not first init"
@@ -60,37 +63,90 @@ class test:
                 key_name, value, 
                 None, True, CPGMgt_ConfigDB.TEMP_CONFIG_DB)
         return "first init"
-    def syncdata(self,src_object,des_object,if_temporary):
-        print src_object
-        print des_object
+    @staticmethod
+    def syncdata(main_object="",child_object="",if_temporary=True,syncDirect=True,init_table=[]):
+        print main_object
+        print child_object
         print if_temporary
         if if_temporary :
             conn = sqlite3.connect(CPGMgt_ConfigDB.TEMP_CONFIG_DB)
+            print "use temp db"
         else :
             conn = sqlite3.connect(CPGMgt_ConfigDB.LOCAL_CONFIG_DB)
-        c = conn.cursor()
-        reply = ""        
         
+        
+        if syncDirect :
+            #copy data from main store 
+            copy_src = main_object            
+            copy_des = child_object
+
+        else :
+            #make current data to main store
+            copy_src = child_object            
+            copy_des = main_object
+
+        c = conn.cursor()
         command = "SELECT key,default_value,value FROM start_config WHERE object = ?"
-        print c.execute(command, [src_object])
+        c.execute(command, [copy_src])
         src = c.fetchall()
-        print "sql result -->  ",
+
+        
+        
+        print "sql src -->  ",
         print src
         for item in src :
-            command = "UPDATE start_config Set default_value=? AND value=?  WHERE object=? and key=?"
-            c.execute(command,[item[1],item[2],des_object,item[0]])
-        print len(reply)
+            key =   str ( item[0] )
+            if key in init_table:
+                default_value = str(item[1])
+                value =  str(item[2])            
+                
+                command = "UPDATE start_config SET default_value = ? , value = ? WHERE object = ? AND key = ?"
+                c.execute(command,[ default_value ,value,copy_des,key])
+                print c.rowcount,
+                print " --> ",
+                print item
+            else :
+                print "key not in main table ,not sync->" +key
+            
+        command = "SELECT key,default_value,value FROM start_config WHERE object = ?"
+        c.execute(command, [copy_des])
+        src = c.fetchall()
+        print "sql dest -->  ",
+        print src
         conn.commit()
         conn.close()
-        
+
+    def getKeyList(self):
+        result =[]
+        for key_value_item in self.INIT_CONFIG_VALUE:
+                result.append(key_value_item[0])
+        print "keylist--> ",
+        print result
+        return result
         
 object_name2= "/com/cisco/cpg/test3"
-object_src= "/com/cisco/cpg/test3"
-object_des= "/com/cisco/cpg/network/wired"
+object_des= "/com/cisco/cpg/test"
+object_src= "/com/cisco/cpg/network/wired"
 
 
+import sys
+direct=True
 
+if len(sys.argv) >1:
+    direct = False
 db =  test()
-print db.firstInit( object_name=object_src,init_list=INIT_CONFIG_VALUE)
-db.syncdata(object_src, object_des, False)
+keys=db.getKeyList()
+#print db.firstInit( object_name=object_src,init_list=db.INIT_CONFIG_VALUE)
+#db.syncdata(main_object="object_src", child_object="object_des",if_temporary=True,syncDirect=False,init_table=db.getKeyList())
+print object_src
+print object_des
+print keys
+db.syncdata(object_src,object_des,True,direct,keys)
+
+
+
+
+
+
+#db.syncdata(main_object=object_src, child_object=object_des, if_temporary=True,syncDirect=False)
 

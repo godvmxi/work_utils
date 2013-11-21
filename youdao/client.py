@@ -29,14 +29,15 @@ or find one that works with your web framework.
 import httplib
 import time
 import oauth
+import pdb 
 
 # settings for the local test consumer
 SERVER = 'localhost'
-PORT = 8080
+PORT = 80
 
 # fake urls for the test server (matches ones in server.py)
 host = 'sandbox.note.youdao.com'
-baseUrl= " http://sandbox.note.youdao.com/oauth/"
+baseUrl= "http://sandbox.note.youdao.com/oauth/"
 REQUEST_TOKEN_URL = baseUrl+'request_token'
 ACCESS_TOKEN_URL = baseUrl+'access_token' 
 AUTHORIZATION_URL = baseUrl+'authorize'
@@ -52,8 +53,8 @@ CONSUMER_SECRET = '4d6f9cafdfb3910a5d5bd96090cfd852 '
 class SimpleOAuthClient(oauth.OAuthClient):
 
     def __init__(self, server, port=httplib.HTTP_PORT, request_token_url='', access_token_url='', authorization_url=''):
-        self.server = server
-        self.port = port
+#        self.server = server
+#        self.port = port
         self.request_token_url = request_token_url
         self.access_token_url = access_token_url
         self.authorization_url = authorization_url
@@ -66,19 +67,19 @@ class SimpleOAuthClient(oauth.OAuthClient):
         # via headers
         # -> OAuthToken
 #        self.request_token_url = "/oauth/request_token"
-
+        print oauth_request.http_method
         print self.request_token_url
-        print oauth_request.to_header()
         print "headers-> %s" %(oauth_request.to_header())
+        
 
         self.connection.request(oauth_request.http_method, self.request_token_url, headers=oauth_request.to_header()) 
         response = self.connection.getresponse()
         dat=  response.read()
         print dat
-        exit()
+
         dat=  oauth.OAuthToken.from_string(dat)
         print dat
-        exit()
+
         return dat
 
     def fetch_access_token(self, oauth_request):
@@ -107,6 +108,7 @@ class SimpleOAuthClient(oauth.OAuthClient):
 def run_example():
 
     # setup
+#    pdb.set_trace()
     print '** OAuth Python Library Example **'
     client = SimpleOAuthClient(SERVER, PORT, REQUEST_TOKEN_URL, ACCESS_TOKEN_URL, AUTHORIZATION_URL)
     consumer = oauth.OAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET)
@@ -120,14 +122,18 @@ def run_example():
     oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer, callback=CALLBACK_URL, http_url=client.request_token_url)
     oauth_request.sign_request(signature_method_hmac_sha1, consumer, None)
     print 'REQUEST (via headers)'
-    print 'parameters: %s' % str(oauth_request.parameters)
+#    print 'parameters: %s' % str(oauth_request.parameters)
+    print oauth_request.to_header()
     pause()
+    print "begin to fetch request"
+
     token = client.fetch_request_token(oauth_request)
     print 'GOT'
     print 'key: %s' % str(token.key)
     print 'secret: %s' % str(token.secret)
     print 'callback confirmed? %s' % str(token.callback_confirmed)
     pause()
+    exit()
 
     print '* Authorize the request token ...'
     pause()
@@ -155,11 +161,13 @@ def run_example():
     print 'REQUEST (via headers)'
     print 'parameters: %s' % str(oauth_request.parameters)
     pause()
+    exit()
     token = client.fetch_access_token(oauth_request)
     print 'GOT'
     print 'key: %s' % str(token.key)
     print 'secret: %s' % str(token.secret)
     pause()
+    exit()
 
     # access some protected resources
     print '* Access protected resources ...'

@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 22
+/svn/!svn/ver/13/trunk
+END
+sina.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/13/trunk/sina.cpp
+END
+parsexml.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/7/trunk/parsexml.cpp
+END
+sinaWeibo.pro
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/11/trunk/sinaWeibo.pro
+END
+weiBoData.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/6/trunk/weiBoData.cpp
+END
+sina.h
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/13/trunk/sina.h
+END
+xmlparse.h
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/3/trunk/xmlparse.h
+END
+parsexml.h
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/7/trunk/parsexml.h
+END
+weiBoData.h
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/12/trunk/weiBoData.h
+END
+therad.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/2/trunk/therad.cpp
+END
+thread.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/12/trunk/thread.cpp
+END
+statuses.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/7/trunk/statuses.cpp
+END
+thread.h
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/12/trunk/thread.h
+END
+xmlParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/4/trunk/xmlParser.cpp
+END
+oauth.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/13/trunk/oauth.cpp
+END
+statuses.h
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/7/trunk/statuses.h
+END
+xmlParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/!svn/ver/4/trunk/xmlParser.h
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/13/trunk/main.cpp
+END
+constData.h
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/13/trunk/constData.h
+END
+oauth.h
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/13/trunk/oauth.h
+END

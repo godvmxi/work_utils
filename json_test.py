@@ -22,5 +22,13 @@ print type(jsonObj)
 print type(load)
 
 
-for i in range(1,3) :
-    print i
+
+test = '''  hello'ooo'kkk'''
+print test
+print test.replace("'", '"')
+
+
+
+
+
+

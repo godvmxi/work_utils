@@ -8,72 +8,69 @@ import pprint
 import warnings
 
 
-
-'''
-RTM_DELADDR
-'''
-
-def check_ipv4_addr_add(x,index):
-    print 'hello1'
-    return x.get('index', None) == index \
-        and x.get('event', None) =='RTM_NEWADDR' \
-        and x.get('family') == 2
-def check_ipv4_addr_del(x,index):
-    print 'hello2'
-    return x.get('index', None) == index \
-        and x.get('event', None) =='RTM_DELADDR'\
-        and x.get('family') == 2
-
-
-
-def reg_new_route_ipv4(x,index):
-    print 'hello3'
-
-    return x.get('event', None)=='RTM_NEWROUTE' \
-        and  x.get('family', None)==2
-def reg_new_route_ipv6(x,index):
-    print 'hello4'
-
-    return x.get('event', None)=='RTM_NEWROUTE' \
-        and  x.get('family', None)==10
-
-def reg_event_all(x,index):
-    print 'hello5'
-    return True
-
-
-def check_link_up(x,index):
-
-    print 'hello6'
-    return x.get('event', None)=='RTM_NEWLINK' \
-        and  x.get('family', None)==0 \
-        and x.get('index', None)==index\
-        and x.get('__align', None)== 0 \
-        and x.get('attrs', None)[2][1]== 'UP'
-        
-def check_link_down(x,index):
-    return x.get('event', None)=='RTM_NEWLINK' \
-        and  x.get('family', None)==0 \
-        and x.get('index', None)==index\
-        and x.get('__align', None)== 0 \
-        and x.get('attrs', None)[2][1]== 'DOWN'
-
     
 def nl_evnet_newlink_up(msg):
-    print '%s--> %s'%(sys._getframe().f_code.co_name,msg)
+    print '%s--> %s'%(sys._getframe().f_code.co_name,0)
 def nl_evnet_newlink_down(msg):
-    print '%s--> %s'%(sys._getframe().f_code.co_name,msg)
+    print '%s--> %s'%(sys._getframe().f_code.co_name,0)
 def nl_evnet_newroute_add(msg):
-    print '%s--> %s'%(sys._getframe().f_code.co_name,msg)
+    print '%s--> %s'%(sys._getframe().f_code.co_name,0)
 def nl_evnet_newroute_del(msg):
-    print '%s--> %s'%(sys._getframe().f_code.co_name,msg)
+    print '%s--> %s'%(sys._getframe().f_code.co_name,0)
 def nl_evnet_newaddr_add(msg):
-    print '%s--> %s'%(sys._getframe().f_code.co_name,msg)
+    print '%s--> %s'%(sys._getframe().f_code.co_name,0)
 def nl_evnet_newaddr_del(msg):
-    print '%s--> %s'%(sys._getframe().f_code.co_name,msg)
+    print '%s--> %s'%(sys._getframe().f_code.co_name,0)
 def nl_evnet_all(msg):
-    print '%s--> %s'%(sys._getframe().f_code.co_name,msg)
+    print '%s->%s'%(msg.get('event'),msg)
+
+class nl_callback_object():
     
+    def __init__(self,iface_index = 0,check_action = None,callback = None):
+#        print "init"
+        self.iface_index  = iface_index
+        self.msg = None
+        self.__callback_handler = callback
+        self.options = {'addr4_add' : self.__check_addr4_add__,
+                               'addr4_del' : self.__check_addr4_del__ ,
+                               'link_up' : self.__check_link_up__ ,
+                               'link_down' : self.__check_link_down__
+                               }
+        if self.options.has_key(check_action):
+            self.___check_handler = self.options[check_action]
+        elif callable(check_action) :
+            self.___check_handler = check_action
+        else :
+            self.___check_handler = self.__check_default__        
+        print self.iface_index,self.__callback_handler,self.___check_handler
+         
+    def check_and_call(self,msg):
+        if self.___check_handler(msg,self.iface_index) :
+            self.__callback_handler(msg)
+    def __check_addr4_add__(self,msg,iface_index):
+        return  msg.get('index') == iface_index \
+        and  msg.get('event') =='RTM_NEWADDR' \
+        and msg.get('family') == 2
+    def __check_addr4_del__(self,msg,iface_index):
+        return msg.get('index') == iface_index \
+        and msg.get('event') =='RTM_DELADDR'\
+        and msg.get('family') == 2
+    def __check_link_up__(self,msg,iface_index):
+        return msg.get('event')=='RTM_NEWLINK' \
+        and  msg.get('family')==0 \
+        and msg.get('index')==iface_index\
+        and msg.get('__align')== 0 \
+        and msg.get('attrs')[2][1]== 'UP'
+ 
+    def __check_link_down__(self,msg,iface_index):
+        return msg.get('event')=='RTM_NEWLINK' \
+        and  msg.get('family')==0 \
+        and msg.get('index')==iface_index\
+        and msg.get('__align')== 0 \
+        and msg.get('attrs')[2][1]== 'DOWN'
+   
+    def __check_default__(self,msg,iface_index):
+        return False   
 
 class pyroute_test():
     def __init__(self):
@@ -82,7 +79,6 @@ class pyroute_test():
         self.WIFI_IFNAME = 'ra0'
         self.nl = pyroute2.IPRoute()
         self.ifaces = pyroute2.IPDB(nl = self.nl, mode = 'direct')
-        pass
 
         
     def create_bridge(self):
@@ -120,120 +116,77 @@ class pyroute_test():
             self.delete_bridge()
             self.show()
             time.sleep(3)
-    def update_index(self):
-        all = self.ifaces
-        result = []
-        for item in all :
-            result.append(item)
-        self.keytable={}
-        lenght = len(result)/2
-        for i in range(0,lenght):            
-            key = result[i+lenght]
-            value = result[i]
-            self.keytable[key] = value-1
-        print self.keytable
+
     def get_index_from_iface(self,iface):
+        try :
+            return self.ifaces.get(iface)['index']
+        except Exception as inst :
+            raise Exception("get can the iface index --> %s  %s"%(iface,inst))
         
         if self.keytable.has_key(iface) :
             return self.keytable[iface]
         else :
             raise Exception('wrong iface -> %s'%(iface))
+    @staticmethod          
+    def nl_event_handler(msg,obj,arg=None):
+        obj.check_and_call(msg)
+
+#        arg[0].check_and_call(msg)
     def register_handler(self,handler):
-        self.update_index()
-        print handler
+
         self.callback_list  = []
-        self.basic_check = {'addr_add' : check_ipv4_addr_add,
-                               'addr_del' : check_ipv4_addr_del,
-                               'link_up' : check_link_up,
-                               'link_down' : check_link_down
-                               }
-#        self.nl.register_callback(nl_evnet_all,lambda x: reg_event_all(x,2),None)
-#        return 
-        if isinstance(handler,list) == False:
+        monitor_event = ['RTM_DELADDR','RTM_NEWLINK','RTM_NEWADDR']
+
+        if isinstance(handler,tuple) == False:
             raise Exception('input item format error')
         for item in handler:
             if len(item) != 4 and isinstance(item,list ) == True :
                 raise Exception('input item format error')
-            if item[0] == None :                
-                print 'add own check function'
-                self.nl.register_callback(item[2], lambda x:item[2](x) , item[3])
-                print "success register "
-                self.callback_list.append(item[2])
-
             else :
-                print "add normal check call"
-                if self.keytable.has_key(item[0]) :
-                    index =  self.get_index_from_iface(item[0])
-                else :
-                    raise Exception('input iface error')
-                if self.basic_check.has_key(item[1]) :
-                    basic_check = self.basic_check[item[1]]
-                else :
-                    raise Exception('input method  error -> %s'%item)
-                input_callback = item[2]
+             
+                index = self.get_index_from_iface(item[0])
+                tmp = nl_callback_object(iface_index = index,check_action=item[1],callback=item[2])                            
                 
-                self.nl.register_callback(input_callback, lambda x:basic_check(x,index) ,item[3])
-                print input_callback
-                print basic_check
-                print "success register"
+                self.nl.register_callback(self.nl_event_handler, 
+                            lambda x:x.get('event') in monitor_event  ,
+                            (tmp,item[3]))
+#                print "register-> %s"%(item)
                 self.callback_list.append(item[2])
+    
+        
+    def register_handler2(self,handlerTable):
+        self.update_index()
+        print handlerTable
+
+
+        self.nl.register_callback(self.nl_event_handler, lambda x:(x.get('event') in ['RTM_DELADDR','RTM_NEWLINK','RTM_NEWADDR'] ) ,args=tuple( handlerTable))
+
     def unregister_handler(self):
         for item in self.callback_list :
             self.nl.unregister_callback(item)
             print 'un register ok'
-                
+    
+
         
 
-    
-def check(x):
-    print "private check"
-    return True
-def check_link_up2(x,index):
 
-    print 'hello6->%s'%index
-    return x.get('event', None)=='RTM_NEWLINK' \
-        and  x.get('family', None)==0 \
-        and x.get('index', None)==index\
-        and x.get('__align', None)== 0 \
-        and x.get('attrs', None)[2][1]== 'UP'
-        
-def check_link_down2(x,index):
-    print 'hello6->%s'%index
-    print index
-    return x.get('event', None)=='RTM_NEWLINK' \
-        and  x.get('family', None)==0 \
-        and x.get('index', None)==index\
-        and x.get('__align', None)== 0 \
-        and x.get('attrs', None)[2][1]== 'DOWN'
-        
-def pyroute_register():
-    nl = pyroute2.IPRoute()
-    ifaces = pyroute2.IPDB(nl = nl, mode = 'direct')
-    index = 2
-    nl.register_callback(nl_evnet_newlink_up, lambda x:check_link_up2(x,index))
-    nl.register_callback(nl_evnet_newlink_down, lambda x:check_link_down2(x,index))
-    while  True :
-        time.sleep(1)
-        index= index+1
-    
 
 if __name__ == "__main__" :
-#    pyroute2_callback()
-    pyroute_register()
     nl_evnet_newlink_up('hello')
     nl_evnet_newlink_down('hello')
     nl_evnet_newaddr_add('hello')
     nl_evnet_newaddr_del('hello')
     test = pyroute_test()
-    test.update_index()
-    table = [
+    table = (
 #                ['p2p1','addr_add',nl_evnet_newaddr_add,None],
 #                ('p2p1','addr_del',nl_evnet_newaddr_del,None),
-#                ['p2p1','link_up',nl_evnet_newlink_up,None],
-                ['p2p1','link_down',nl_evnet_newlink_down,None]
+                ['br0','addr4_add',nl_evnet_newaddr_add,None],
+                ['br0','addr4_del',nl_evnet_newaddr_del,None],
+                ['p32p1','link_up',nl_evnet_newlink_up,None],
+                ['p32p1','link_down',nl_evnet_newlink_down,None],
 
-             ]
-    pprint.pprint(table) 
+             )
+#    pprint.pprint(table) 
     test.register_handler(table)
 #    test.unregister_handler()
     while True:

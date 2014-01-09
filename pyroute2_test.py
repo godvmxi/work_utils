@@ -25,9 +25,30 @@ def nl_evnet_all(msg):
     print '%s->%s'%(msg.get('event'),msg)
 
 class nl_callback_object():
-    
-    def __init__(self,iface_index = 0,check_action = None,callback = None):
-#        print "init"
+    '''
+        netlink check call back event class ,design for register handler
+        
+        Args:
+            iface_index: iface index num ,check pyroute2.IPDB for index
+            check_action :check the netlink msg whether match the request 
+                            to decide to run the callback handler
+                            if check_action if None or not in the action table,no callback will be called
+                            can give a custom handler for call
+                            acions table :addr4_add/addr4_del/link_up/link_down
+            callback :call back handler
+
+        Returns:        
+            string: apply result
+         
+        Raises:
+            Exception: "para not full"
+        
+        '''    
+    def __init__(self,iface_index = -1,check_action = None,callback = None):
+        if callback == None :
+            raise "para not full"
+        if iface_index == -1 :
+            raise "para not full"
         self.iface_index  = iface_index
         self.msg = None
         self.__callback_handler = callback
@@ -149,7 +170,7 @@ class pyroute_test():
                 
                 self.nl.register_callback(self.nl_event_handler, 
                             lambda x:x.get('event') in monitor_event  ,
-                            (tmp,item[3]))
+                            (tmp,item[3],1,))
 #                print "register-> %s"%(item)
                 self.callback_list.append(item[2])
     
@@ -180,10 +201,10 @@ if __name__ == "__main__" :
     table = (
 #                ['p2p1','addr_add',nl_evnet_newaddr_add,None],
 #                ('p2p1','addr_del',nl_evnet_newaddr_del,None),
-                ['br0','addr4_add',nl_evnet_newaddr_add,None],
-                ['br0','addr4_del',nl_evnet_newaddr_del,None],
-                ['p32p1','link_up',nl_evnet_newlink_up,None],
-                ['p32p1','link_down',nl_evnet_newlink_down,None],
+                ['p2p1','addr4_add',nl_evnet_newaddr_add,None],
+                ['p2p1','addr4_del',nl_evnet_newaddr_del,None],
+                ['p8p1','link_up',nl_evnet_newlink_up,None],
+                ['p8p1','link_down',nl_evnet_newlink_down,None],
 
              )
 #    pprint.pprint(table) 

@@ -30,7 +30,8 @@ int main()
     /*
      * 创建一个PF_NETLINK的SOCKET,使用NETLINK_ROUTE协议
      */
-    nSocket = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
+    //nSocket = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
+    nSocket = socket(PF_NETLINK, SOCK_DGRAM, NETLINK_KOBJECT_UEVENT);
     if(nSocket < 0)
     {
         fprintf(stderr, "创建SOCKET错误:%s\n", strerror(errno));
@@ -59,15 +60,15 @@ int main()
     struReq.nh.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
     struReq.ifi.ifi_family = AF_UNSPEC;
     memset(&struAddr, 0, sizeof(struAddr));
-    struAddr.nl_family = AF_NETLINK;
+    struAddr.nl_family = NETLINK_KOBJECT_UEVENT;
     struAddr.nl_pid = 0;
     struAddr.nl_groups = 0;
-    if(sendto(nSocket, &struReq, struReq.nh.nlmsg_len, 0,
-        (struct sockaddr *)&struAddr, sizeof(struAddr)) < 0)
-    {
-        fprintf(stderr, "发送数据错误:%s\n", strerror(errno));
-        return -1;
-    }
+//    if(sendto(nSocket, &struReq, struReq.nh.nlmsg_len, 0,
+//        (struct sockaddr *)&struAddr, sizeof(struAddr)) < 0)
+//    {
+//        fprintf(stderr, "发送数据错误:%s\n", strerror(errno));
+//        return -1;
+//    }
 
     /*
      * 循环接收数据，直到超时
@@ -76,11 +77,14 @@ int main()
     memset(szBuffer, 0, sizeof(szBuffer));
     while((nLen = recv(nSocket, szBuffer, sizeof(szBuffer), 0)))
     {
-        alarm(0);
+
+        memset(szBuffer, 0, sizeof(szBuffer));
         pstruNL = (struct nlmsghdr *)szBuffer;
         /*
          * 判断是否继续有数据
          */
+        printf("event -->   %s\n",szBuffer);
+        continue ;
         while(NLMSG_OK(pstruNL, nLen))
         {
             /*

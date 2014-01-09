@@ -1,0 +1,39 @@
+*** Settings ***
+Library         OperatingSystem
+Test Setup     		Test Setup
+Test Teardown     	Test Teardown   
+
+*** Variables ***
+${times}          20
+${OK}				'PASS'
+${ERROR}			'FAIL'
+${STATE}			${OK}
+
+*** Test Cases ***
+For loop
+
+    : FOR    ${var}    IN RANGE    1    ${times}
+    \   	Log    ${var}    WARN
+    \		Setting State OK
+    \    	Run Keyword If    ${var} >= 7    	Setting State ERROR
+    \		Should Be Equal As Strings   		${STATE}			${OK}
+
+Exit For Loop
+
+*** Keyword ***
+Test exit
+    Log    "test exit"    WARN
+
+Test run
+    Log    "test run"    WARN
+Setting State Error
+	Log    'set error'    WARN
+    Set Suite Variable		${STATE}   		'FAIL'
+Setting State OK
+	Log    'set ok'    WARN
+    Set Suite Variable		${STATE}   		'PASS'
+Test Setup
+	Log    'setup'    WARN
+Test Teardown
+	Log    'teardown'    WARN
+	Run Keyword If All Tests Passed     Test exit

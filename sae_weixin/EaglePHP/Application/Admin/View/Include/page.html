@@ -1,0 +1,20 @@
+
+<div class="panelBar" >
+	<div class="pages">
+		<span>显示</span>
+		<select class="combox" name="numPerPage" onchange="dwzPageBreak({targetType:'{{$targetType|default:navTab}}', data:{numPerPage:this.value}})">
+			<option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+        </select>
+        <span>条，共{{$page.totalCount}}条</span>
+	</div>
+	<div class="pagination" targetType="{{$targetType|default:'navTab'}}" totalCount="{{$page.totalCount}}" numPerPage="{{$page.numPerPage}}" pageNumShown="{{$page.pageNumShown}}" currentPage="{{$page.pageNum}}">
+</div>
+
+<script type="text/javascript">
+    $(function(){
+        $("select[name=numPerPage] option[value={{$page.numPerPage}}]").attr("selected", "selected");
+    });
+</script>

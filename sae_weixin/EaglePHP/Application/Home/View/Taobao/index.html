@@ -1,0 +1,79 @@
+{{include file="Include/head.html" taobao="actived"}}
+
+    <div id="recommendedList">
+    <div class="column">
+      <div class="columnBody">
+        <h2><strong>精选商品</strong></h2>
+        <div class="innerContent">
+          <div style="margin-left: 15px;">
+	          <form method="post" action="{{$smarty.const.__ROOT__?c=taobao|url}}">
+	          <input type="text" class="textfield" name="keyword" value="{{$smarty.request.keyword|default:'搜索你感兴趣的商品'}}" onfocus="if (this.value == '搜索你感兴趣的商品') this.value = '';" onblur="if (this.value == '') this.value = '搜索你感兴趣的商品';"  />
+	          <select class="selectfield" name="cid"><option value="">--商品分类--</option>{{html_options options=$cats selected=$smarty.request.cid}}</select>
+	          <select class="selectfield" name="sort"><option value="">--商品排序--</option>{{html_options options=$sorts selected=$smarty.request.sort}}</select>
+	          <input name="start_price" size="10" value="{{$smarty.request.start_price|default:'起始价格'}}" onfocus="if (this.value == '起始价格') this.value = '';" onblur="if (this.value == '') this.value = '起始价格';"/>
+	          <input name="end_price" size="10" value="{{$smarty.request.end_price|default:'最高价格'}}" onfocus="if (this.value == '最高价格') this.value = '';" onblur="if (this.value == '') this.value = '最高价格';"/>
+	          <input name="" class="button" type="submit" value="搜索" />
+	          <div class="clear"></div>
+	          </form>
+          </div>
+          <div class="mainContent" id="container" >
+           {{section name=loop loop=$list}}
+            <div class="box photo col3">
+              <a href="{{$list[loop]->click_url}}" target="_blank"><img src="{{$list[loop]->pic_url}}_400x400.jpg" alt="" /></a>
+              
+              <div style="font-size: 14px;padding-top: 8px;">
+              <font style="color:rgb(255,255,255);font-size:24pt;color: red;float: right;">￥{{$list[loop]->price}}</font>
+              <br/>
+              <br/>
+              <span style="font-size:12px;"><strong>{{$list[loop]->title}}<font color="#737373" class="Apple-style-span"></font></strong></span>
+              <font color="blue" style="float: right;"><a href="{{$list[loop]->shop_click_url}}" target="_blank">{{$list[loop]->nick}}</a></font>
+              <br/>
+              <div>卖家信用等级：<font color="blue">{{$list[loop]->seller_credit_score}}</font></div>
+              <div>30天内成交量：<font color="blue">{{$list[loop]->commission_num}}</font></div>
+              <div>商品所在地：<font color="blue">{{$list[loop]->item_location}}</font></div>
+              </div>
+            </div>
+           {{/section}}
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+      <p style="text-align: center;font-size: 14px;">{{$page}}</p>
+      <div class="clear"></div>
+      <div class="columnFooter"></div>
+    </div>
+  </div>
+
+<link href="{{$smarty.const.__SHARE__}}plug/masonry/style.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="{{$smarty.const.__SHARE__}}plug/masonry/jquery.masonry.min.js"></script>  
+<script>
+  $(function(){
+
+    var $container = $('#container');
+    $container.imagesLoaded( function(){
+      $container.masonry({
+        itemSelector : '.box'
+      });
+    });
+  
+  });
+</script>
+
+<script type="text/javascript">
+alimama_pid="mm_32251410_3206928_11313130";
+alimama_type="g";
+alimama_tks={};
+alimama_tks.style_i=1;
+alimama_tks.lg_i=1;
+alimama_tks.w_i=572;
+alimama_tks.h_i=69;
+alimama_tks.btn_i=1;
+alimama_tks.txt_s="";
+alimama_tks.hot_i=1;
+alimama_tks.hc_c="0065FF";
+alimama_tks.cid_i=0;
+alimama_tks.c_i=1;
+</script>
+
+<script type="text/javascript" src="http://a.alimama.cn/inf.js"></script>
+{{include file="Include/foot.html"}}

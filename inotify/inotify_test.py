@@ -36,6 +36,8 @@ class EventHandler(pyinotify.ProcessEvent):
         #    logger.debug('Event comming-> %s %s'%(event.name,event.maskname))
 def hello():
     print 'I am handler'
+def inotifyCallback(test):
+    return True
 
 def inotify_dir() :
     wfile = '/tmp/inotify/'
@@ -46,7 +48,7 @@ def inotify_dir() :
     handler.setLogger(hello)
     notifier = pyinotify.Notifier(wm, handler)
     wdd = wm.add_watch(wfile, mask, rec=True,auto_add=True)
-    notifier.loop()
+    notifier.loop(callback=inotifyCallback)
 def add_threading():
     test = threading.Thread(target =inotify_dir )
     test.start()

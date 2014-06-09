@@ -2,6 +2,7 @@
 import sys
 import os
 import fnmatch
+import shutil
 converter = "/var/ASIC_ICVERIFY_DATA/tools/GPU/pdump2/linux/64bit/Pdump2ToBinaryLite"
 gpu_resource_dir = "/nfs/bon"
 pdump2_script = "out2.txt"

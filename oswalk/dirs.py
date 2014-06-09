@@ -1,12 +1,15 @@
 
 import os, fnmatch
-
+import shutil
 rename_list = ["out.3dsig.bin","out.hwperf.bin","out.tasig.bin","out.trace.bin","outfb0.bin","outfb0.bmp","outfb0_diff_thumb.png","outfb0_thumb.png"]
 untar_list = ["out2.txt.gz","out2.prm.gz"]
 copy_list = ["out2.txt","out2.prm"]
 
 all_dirs = []
 less_dirs = []
+
+folder_list = [ "","","","",""]
+
 
 
 def all_files(root, patterns = '*', single_level = False, yield_folders=False):
@@ -41,7 +44,7 @@ def copy_to_new_dir(oldpath,newpath):
     
     oldpath = oldpath.replace("out2.txt.gz","")
     print "copy : %s --> %s" %(oldpath,newpath)
-    cmd =  "cp -rf %s  %s" %(oldpath,newpath)
+    cmd =  "cp -rf %s/*  %s" %(oldpath,newpath)
     os.system(cmd)
 def untar_file_in_new_dir(file):
     cmd = "gzip -dfk %s " %(file)
@@ -111,14 +114,62 @@ def diff_dirs(src_dir):
         for dir in all_dirs :
             index +=1
             print "%s --> %s"%(index,dir)
+            
+def hash_check_dir(dir1,dir2):
+    cmd1 = "crc32 %s/*"%(dir1)
+    cmd2 = "crc32 %s/*"%(dir2)
+    hash_buf1 = os.popen(cmd1).readlines()
+    hash_buf2 = os.popen(cmd2).readlines()
+    hash_out1 = []
+    hash_out2 = []
+    for item in hash_buf1 :
+        item = item.split()[0]
+        hash_out1.append(item)
+    for item in hash_buf2 :
+        item = item.split()[0]
+        hash_out2.append(item)
+    print hash_out1
+    print hash_out2
+    if len(hash_out1) != len(hash_out2) :
+        raise Exception("hash error 1 on dir %s  %s "%(dir1,dir2))
+    if hash_out1 != hash_out2 :
+        raise Exception("hash error 2 on dir %s  %s "%(dir1,dir2))
         
     
 
 if __name__ == '__main__':
-    dir_home = '/home/dan/ownCloud/Multimedia/GPU/new/GPU/GPU'
-    target_home = '/home/dan/ownCloud/Multimedia/GPU/new/GPU/GPU2'
+    dir_home = '/nfs/socv/data/gpu/bonnie/'
+    folder_list = [ "acelite_test","comp_test","integ_test","jtag_integration_tests","power_test","register_test"]
+    folder_list = [ "acelite_test","comp_test","integ_test","jtag_integration_tests","power_test","register_test"]
+    target_home = '/nfs/ASIC_ICVERIFY_DATA/bonnie'
     temppath = ""
-    diff_dirs(dir_home)
+    
+    index = 0
+    for folder in folder_list  :
+        temppath = dir_home + folder + "/"
+        print "deal dir -> %s"%folder
+        files = all_files(temppath,"out2.txt")
+#         index = 0
+        for file in files :
+            index += 1
+#             continue
+            src_dir = file.replace("/out2.txt","")
+            dir_temp =  file.replace(temppath,"").replace("out2.txt","").replace("//","/").replace("-","_").split("/")
+            temp = []
+            for item in dir_temp :
+                if item != "" :
+                    temp.append(item)
+            dir_temp = "_".join(temp)
+            des_dir = target_home  +"/"+folder+"/"+ dir_temp
+            print "temp-> %s"%dir_temp
+            print src_dir
+            print des_dir
+            create_new_dir(des_dir)
+            copy_to_new_dir(src_dir,des_dir)
+            hash_check_dir(src_dir,des_dir)
+        print "total number -> %s"%(index)
+    print "deal over!!!!!!!!!"
+#     diff_dirs(dir_home)
 #     copy_file_list(dir_home,target_home,copy_list)
 #     copy_rename_file_list(dir_home,target_home,rename_list,"std_")
     

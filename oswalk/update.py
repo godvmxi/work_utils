@@ -54,11 +54,13 @@ def update_gpu_list_file(src_dir,find_file):
         subdir = subdir.split("/")[-2] + "\n"
         items.append(subdir)
     print "update items -> %d" %(len(items))
-    fd = open(gpu_resource_dir+"case_list.list","w")
+    curdir = os.getcwd()
+    fd = open(curdir+"/case_list.list","w")
     fd.writelines(items)
     fd.close
     
-        
+def read_template_xml(file_path):
+    pass
 def create_folder(dir):
     pass
 
@@ -66,18 +68,19 @@ def create_folder(dir):
 if __name__ == "__main__" :
     
     argc = len(sys.argv)
-
+    curdir = os.getcwd()
+    print curdir
     if argc != 2:
         print help
         exit(0)
     if sys.argv[1] == "all" :
-        update_all_subdir(gpu_resource_dir,target_file)
+        update_all_subdir(curdir,target_file)
     elif sys.argv[1] == "list" :
         print "update list file"
-        update_gpu_list_file(gpu_resource_dir,target_file)
+        update_gpu_list_file(curdir,target_file)
         pass
-    elif os.path.isdir(gpu_resource_dir+sys.argv[1]) :
-        update_binliteplayer_data(gpu_resource_dir+sys.argv[1])
+    elif os.path.isdir(curdir+sys.argv[1]) :
+        update_binliteplayer_data(curdir+sys.argv[1])
     else :
         print help
         

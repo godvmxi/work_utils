@@ -1,6 +1,7 @@
 
 import os, fnmatch
 import shutil
+import sys
 rename_list = ["out.3dsig.bin","out.hwperf.bin","out.tasig.bin","out.trace.bin","outfb0.bin","outfb0.bmp","outfb0_diff_thumb.png","outfb0_thumb.png"]
 untar_list = ["out2.txt.gz","out2.prm.gz"]
 copy_list = ["out2.txt","out2.prm"]
@@ -136,25 +137,29 @@ def hash_check_dir(dir1,dir2):
         raise Exception("hash error 2 on dir %s  %s "%(dir1,dir2))
         
     
-
+help ='''
+app src_dir des_dir
+'''
 if __name__ == '__main__':
-    dir_home = '/nfs/socv/data/gpu/bonnie/'
-    folder_list = [ "acelite_test","comp_test","integ_test","jtag_integration_tests","power_test","register_test"]
-    folder_list = [ "acelite_test","comp_test","integ_test","jtag_integration_tests","power_test","register_test"]
-    target_home = '/nfs/ASIC_ICVERIFY_DATA/bonnie'
-    temppath = ""
+
     
+    dir_home = '/nfs/socv/data/gpu/bonnie/'
+
+    folder_list = [ "acelite_test","comp_test","integ_test","jtag_test","power_test","register_test"]
+    target_home = '/nfs/bonnie'
+    temppath = ""
+    flag_file = "out2.txt.gz"
     index = 0
     for folder in folder_list  :
         temppath = dir_home + folder + "/"
         print "deal dir -> %s"%folder
-        files = all_files(temppath,"out2.txt")
+        files = all_files(temppath,flag_file)
 #         index = 0
         for file in files :
             index += 1
 #             continue
-            src_dir = file.replace("/out2.txt","")
-            dir_temp =  file.replace(temppath,"").replace("out2.txt","").replace("//","/").replace("-","_").split("/")
+            src_dir = file.replace(flag_file,"")
+            dir_temp =  file.replace(temppath,"").replace(flag_file,"").replace("//","/").replace("-","_").split("/")
             temp = []
             for item in dir_temp :
                 if item != "" :

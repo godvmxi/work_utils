@@ -130,14 +130,17 @@ def gen_origin_file_hash(subdir):
         tmp_hash = [1,2]
         if os.path.isdir(subdir + item) == True :
             print "skip dir -> %s" %(subdir + item)
-            continue         
+            continue 
+        if item == hash_file_name :
+            print "skip hash file name"
+            continue        
         tmp_hash[0] = item
         tmp_hash[1] = calc_md5(subdir+item)
         hash_table.append(tmp_hash)      
     print hash_table
     if os.path.isdir(subdir+case_temp_dir) == False :
         create_folder(subdir+case_temp_dir)   
-    gen_hash_xml(subdir+case_temp_dir+"/"+hash_file_name,hash_table) 
+    gen_hash_xml(subdir+"/"+hash_file_name,hash_table) 
 def pre_gpu_test_case(subdir):
     cmd = "/bin/gzip -dfk %s/%s"%(subdir,"out2.txt.gz") 
     print cmd
@@ -156,6 +159,10 @@ def init_gpu_test_case():
         gen_origin_file_hash(subdir)
 
         break
+def extract_binlite_memory_dump(sub_dir): 
+    pass   
+def extract_gpu_test_case_result(sub_dir):
+    pass
             
                 
     
@@ -164,6 +171,15 @@ def init_gpu_test_case():
 if __name__ == "__main__" :
 
 #     working_dir = os.getcwd()
+#     print os.path.dirname(__file__)
+#     print os.path.abspath(__file__)
+#     old_dir = os.getcwd()
+#     print old_dir
+#     os.chdir("/home/dan")
+#     print os.getcwd()
+#     os.chdir(old_dir)
+#     print os.getcwd()
+#     exit(0) 
     print_brife_msg()
     init_gpu_test_case()
 #     file_list = [ [ 'file1','hash1'],[ 'file2','hash2'],[ 'file3','hash3'],[ 'file14','hash4'] ]

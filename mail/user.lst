@@ -1,0 +1,13 @@
+#user password file ,just edit it ,will update new password to the passwd file
+#format :user  password  ,no space in the start char
+#left password empty ,will generate randon password
+#tools developed by Bright.Jiang
+#
+#BSP leader
+#
+warits.wang           236890 
+#
+#BSP
+#
+bright.jiang          098765 
+#sam.zhou 			 099032

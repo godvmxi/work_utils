@@ -43,4 +43,5 @@ if __name__ == "__main__" :
     head.cmdType=0x11
     head.hash=0xff
     print head
-    print struct2stream(head)
+    raw = struct2stream(head)
+    print repr(raw)

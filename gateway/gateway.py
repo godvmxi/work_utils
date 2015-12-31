@@ -6,9 +6,9 @@ import struct
 from  ctypes import *
 import ctypes
 class Header(Structure) :
-    _field_ = [ ('cmdType',    c_ubyte) ,
+    _fields_ = [ ('cmdType',    c_ubyte) ,
                             ('hash',            c_ubyte) ,
-                            ('test',          c_ubyte ),
+                            ("length",          c_ubyte ),
                             ('counter',       ctypes.c_uint16 ),
                             ('deviceId',      ctypes.c_uint16) ,
                             ('groupId',        ctypes.c_uint16)]
@@ -16,9 +16,9 @@ class Header(Structure) :
 
         print self.cmdType
         print self.hash
-        print self.test
+        print self.length
         print self.counter
-        return "{0}-{1}-{2}-{3}-{4}-{5}".format(  self.cmdType,  self.hash,  self.len,  self.hash,  self.hash,  self.hash)
+        return "{0}-{1}-{2}-{3}-{4}-{5}".format(  self.cmdType,  self.hash,  self.length,  self.hash,  self.hash,  self.hash)
     
 if __name__ == "__main__" :
     head = Header();

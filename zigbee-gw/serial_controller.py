@@ -32,6 +32,8 @@ class SerialUtils():
         self.port  = port
         self.baudrate =  baudrate
         self.serialHandler =  serial.Serial(self.port,self.baudrate)
+        if not self.serialHandler.isOpen():
+            raise Exception("Device %s is locked"%self.port)
         self.serialHandler.flushInput()
         self.serialHandler.flushOutput()
         print self.serialHandler
@@ -62,46 +64,67 @@ class SerialUtils():
             strListSize =  len(strList)
 
             indexList =    range(0,strListSize)
-            # print "list -> %s %s %s"%(strListSize,strList,indexList)
+            print "list -> %s %s %s"%(strListSize,strList,indexList)
             for index in range(0,strListSize):
                 temp = strList[index]
                 tempLen = len(temp)
                 # print "item -> %d %s"%(tempLen,temp)
                 if index == 0 :
                     if tempLen != 0:
+                        self.curReadBuf =  "%s%s"%(self.curReadBuf,temp)
                         if (buf[0] != '*' ):
                             # print "index 0 not new "
-                            self.curReadBuf =  "*%s%s"%(self.curReadBuf,temp)
+                            # self.curReadBuf =  "%s%s"%(self.curReadBuf,temp)
+                            if tempLen[tempLen-1] == '#':
+                                self.readQueue.put('*'+self.curReadBuf)
+                                self.curReadBuf = ''
                         else :
-                            # print "index 0 new"
-                            self.readQueue.put(self.curReadBuf)
+                            if temp[tempLen-1] == '#':
+                                self.readQueue.put('*'+self.curReadBuf)
                             self.curReadBuf = ""
-                    else :
+                    else:
                         # print "index 0 0"
                         if len(self.curReadBuf ) != 0:
                             self.readQueue.put(self.curReadBuf)
                             self.curReadBuf = ""
                 elif index == (strListSize-1):
                     # print "last 0 0  ->%d %s"%(tempLen,temp)
-                    if len(self.curReadBuf ) != 0:
-                        self.readQueue.put(self.curReadBuf)
-                        self.curReadBuf = "*%s"%temp
+                    self.curReadBuf = "%s"%temp
+                    # if len(self.curReadBuf ) != 0:
+                    if temp[tempLen-1 ] == "#":
+                        self.readQueue.put('*'+self.curReadBuf)
+                        self.curReadBuf = ''
+                    elif len(self.curReadBuf) > self.MAX_BUF_SIZE :
+                        self.curReadBuf = ""
                     else :
-                        self.curReadBuf = "*%s"%temp
+                        pass
+
+
+
+                    # else :
+                    #     self.curReadBuf = "*%s"%temp
 
                     # self.readQueue.put(self.curReadBuf)
 
                 else :
                     # print "normal->%d %s"%(index,temp)
-                    if len(self.curReadBuf ) != 0:
-                        self.readQueue.put(self.curReadBuf)
-                        self.curReadBuf = "*%s"%temp
+                    self.curReadBuf = "%s"%temp
+                    if temp[tempLen-1 ] == "#":
+                        self.readQueue.put('*'+self.curReadBuf)
+                    elif len(self.curReadBuf) > self.MAX_BUF_SIZE :
+                        self.curReadBuf = ""
+                    else :
+                        pass
+
+
 
             queueSize =  self.readQueue.qsize()
             print "queue size -> %d"%queueSize
             if (queueSize > 3):
                 for index in range(0,queueSize):
                     print repr(self.readQueue.get() )
+            print
+            print
 
     def logging(self,msg):
         msg = "SerialUtils->%s"%msg

@@ -4,8 +4,12 @@ import Queue
 import os
 import re
 import time
+import threading
+
+
 class SerialUtils():
     MAX_BUF_SIZE = 512
+
     def __init__(self):
         buffer= os.popen("ls /dev/ttyUSB*").readlines()
         #print buffer
@@ -31,7 +35,8 @@ class SerialUtils():
         #     raise Exception("not exist the target usb serial")
         self.port  = port
         self.baudrate =  baudrate
-        self.serialHandler =  serial.Serial(self.port,self.baudrate)
+        self.serialHandler =  serial.Serial(port = self.port,baudrate = self.baudrate,timeout=0.1)
+        # self.serialHandler.timeout(0.5)
         if not self.serialHandler.isOpen():
             raise Exception("Device %s is locked"%self.port)
         self.serialHandler.flushInput()
@@ -39,7 +44,7 @@ class SerialUtils():
         print self.serialHandler
 
         # self.serialHandler.open()
-    def loop(self):
+    def readLoop(self):
         self.logging( "wait for uart data")
         while True:
 
@@ -132,11 +137,13 @@ class SerialUtils():
             self.logger.debug(msg)
         else :
             print(msg)
+
     def resetSerial(self):
         self.serialHandler.close()
         self.logger('reset serial port')
         time.sleep(0.5)
         self.serialHandler.open()
+        self.serialHandler.timeout(0.5)
     def readItem(self):
         if self.readQueue.empty() ==  False :
             return self.readQueue.get()
@@ -145,6 +152,7 @@ class SerialUtils():
     def writeItem(self,item):
         if self.writeQueue.full() == False :
             self.writeQueue.put(item)
+            self.logging("current write item -> %d"%self.writeQueue.qsize())
             return True 
         else:
             return False
@@ -158,6 +166,26 @@ class SerialUtils():
                 flag = False
                 break
         return flag
+    def writeLoop(self):
+        index = 0
+        while True :
+            for i in [1,2,3]:
+                item  =  "*helloXXXX%X#"%index
+                print "insert -> %s"%item
+                self.writeItem(item)
+                index = index + 1
+
+
+            #try write data into serial
+            while( not self.writeQueue.empty()  ):
+                temp = self.writeQueue.get()
+                tempLen =  len(temp)
+                if len(temp) > self.MAX_BUF_SIZE :
+                    self.logging("current item is error %d %s"%(tempLen,temp))
+                    continue
+                print "will write->%s"%temp
+                self.serialHandler.write(temp)
+            time.sleep(1)
 
 if __name__ == "__main__" :
     reStr =r'[0-9A-Z]'
@@ -168,7 +196,24 @@ if __name__ == "__main__" :
     Com =  SerialUtils()
     # Com.open("Com20")
     Com.open()
-    Com.loop()
+    threadsList = []
+    t1 = threading.Thread(target=Com.readLoop,args=('') )
+    # t2 = threading.Thread(target=Com.writeLoop,args=(""))
+    threadsList.append(t1)
+    # threadsList.append(t2)
+
+
+    for ts in threadsList :
+        ts.start()
+
+    print "??"
+    while True :
+        var = input()
+        if var == 'c':
+            print "try exit"
+            exit(1)
+    exit(1)
+    Com.readLoop()
     while True :
         num =  Com.serialHandler.inWaiting()
         if num != 0 :
@@ -181,5 +226,5 @@ if __name__ == "__main__" :
             print repr(test)
         time.sleep(0.5)
 
-    Com.loop()
+    Com.readLoop()
     pass

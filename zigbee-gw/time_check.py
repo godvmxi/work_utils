@@ -86,21 +86,29 @@ class CheckTime():
     def setRtc(self,string_time):
         '''
         Args:
-            string_time: "2008-08-08-12-00-00"
+            string_time: "2008-08-08 12:00:00"
         Returns:
         '''
-        temp = string_time.split('-')
+        try:
+            in_date,in_time = string_time.split()
 
-        self.rtc_bin_time["second"] =   temp[6]
-        self.rtc_bin_time["minute"] =   temp[5]
-        self.rtc_bin_time["hour"] =     temp[4]
-        self.rtc_bin_time["day"] =      temp[3]
-        self.rtc_bin_time["week"] =     temp[2]
-        self.rtc_bin_time["month"] =    temp[1]
-        self.rtc_bin_time["year"] =     temp[0]
+            in_date = in_date.split('-')
+            in_time =  in_time.split(":")
 
-        #self.rtc_bcd_time["control1"] = self.hex2bcd(self.rtc_bin_time['control1'])
-        #self.rtc_bcd_time["control2"] = self.hex2bcd(self.rtc_bin_time['control2'])
+            self.rtc_bin_time["second"] =   in_time[2]
+            self.rtc_bin_time["minute"] =   in_time[1]
+            self.rtc_bin_time["hour"] =     in_time[0]
+            self.rtc_bin_time["day"] =      in_date[2]
+            # self.rtc_bin_time["week"] =     in_date[2]
+            self.rtc_bin_time["month"] =    in_date[1]
+            self.rtc_bin_time["year"] =     in_date[0]
+            print self.rtc_bin_time
+        except Exception as inst :
+            print("input time format or data error")
+            return False
+
+            #self.rtc_bcd_time["control1"] = self.hex2bcd(self.rtc_bin_time['control1'])
+            #self.rtc_bcd_time["control2"] = self.hex2bcd(self.rtc_bin_time['control2'])
 
 
         self.rtc_bcd_time["second"] = self.hex2bcd(self.rtc_bin_time['second'])
@@ -111,8 +119,18 @@ class CheckTime():
         self.rtc_bcd_time["month"] = self.hex2bcd(self.rtc_bin_time['month'])
         self.rtc_bcd_time["year"] = self.hex2bcd(self.rtc_bin_time['year'])
 
-    def getNetTime(self):
-        pass
+
+    def setSysTime(self,string_time):
+        try:
+            dat = 'date -s "%s"'%(string_time)
+            print dat
+            os.system(dat)
+        except Exception as inst :
+            print ("set sys time error ->%s"%inst)
+            return False
+    def getLocalWeek(self):
+        return time.localtime().tm_wday
+
 
     def getNetTime(self,server="www.beijing-time.org"):
         try:
@@ -153,6 +171,7 @@ if __name__  ==  "__main__" :
 
     check = CheckTime()
     check.getNetTime()
+    print check.getLocalWeek()
     exit()
     while True :
         time.sleep(1)

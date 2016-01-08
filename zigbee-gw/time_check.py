@@ -3,6 +3,9 @@
 __author__ = 'Bright Jiang'
 import os
 import  time
+import time
+import os
+import httplib
 class CheckTime():
     rtc_reg_control_1   = 0
     rtc_reg_control_2   = 1
@@ -108,12 +111,49 @@ class CheckTime():
         self.rtc_bcd_time["month"] = self.hex2bcd(self.rtc_bin_time['month'])
         self.rtc_bcd_time["year"] = self.hex2bcd(self.rtc_bin_time['year'])
 
+    def getNetTime(self):
+        pass
+
+    def getNetTime(self,server="www.beijing-time.org"):
+        try:
+             conn = httplib.HTTPConnection(server)
+             conn.request("GET", "/time.asp")
+             response = conn.getresponse()
+             print response.status, response.reason
+             if response.status == 200:
+                #解析响应的消息
+                result = response.read()
+                # print(result)
+                ts=  response.getheader('date') #获取http头date部分
+                # 将GMT时间转换成北京时间
+                # print ts
+                ltime= time.strptime(ts[5:25], "%d %b %Y %H:%M:%S")
+                # print(ltime)
+                ttime=time.localtime(time.mktime(ltime)+8*60*60)
+                # print(ttime)
+                dat='date -s "%u-%02u-%02u %02u:%02u:%02u" '%(ttime.tm_year,ttime.tm_mon,ttime.tm_mday,ttime.tm_hour,ttime.tm_min,ttime.tm_sec)
+
+                print dat
+                #open it when in board
+                os.system(dat)
+                return True
+             else :
+                 print ("get network time error ->%s"%response.status)
+                 return False
+        except Exception as inst:
+             print ("net time except ->%s "%inst)
+             return False
+
 
 
 
 
 if __name__  ==  "__main__" :
+
+
     check = CheckTime()
+    check.getNetTime()
+    exit()
     while True :
         time.sleep(1)
         check.getRtcTime()

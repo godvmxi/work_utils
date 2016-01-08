@@ -31,8 +31,8 @@ class CheckTime():
         return high4*10 +low4
         return 'hex'
     def hex2bcd(self,hex):
-        high4 = hex /16
-        low4 = hex %16
+        high4 = hex /10
+        low4 = hex %10
         result = (high4 << 4)  | low4
         return result
     def getRtcTime(self):
@@ -127,7 +127,7 @@ class CheckTime():
 
             #self.rtc_bcd_time["control1"] = self.hex2bcd(self.rtc_bin_time['control1'])
             #self.rtc_bcd_time["control2"] = self.hex2bcd(self.rtc_bin_time['control2'])
-
+        print 'year -> ' ,self.rtc_bin_time["year"]
 
         self.rtc_bcd_time["second"] = self.hex2bcd(self.rtc_bin_time['second'])
         self.rtc_bcd_time["minute"] = self.hex2bcd(self.rtc_bin_time['minute'])
@@ -153,7 +153,7 @@ class CheckTime():
         self.setRtcReg( self.rtc_reg_day   ,self.rtc_bcd_time[ "day" ] )
         self.setRtcReg( self.rtc_reg_month   ,self.rtc_bcd_time[ "month" ] )
         self.setRtcReg( self.rtc_reg_year   ,self.rtc_bcd_time[ "year" ] )
-        self.setRtcReg( self.rtc_reg_week   ,self.rtc_bcd_time[ "week" ] )
+        self.setRtcReg( self.rtc_reg_week   ,week )
 
     def setSysTime(self,string_time):
         try:

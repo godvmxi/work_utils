@@ -12,8 +12,7 @@ def hexShow(raw):
 
 
 class StructBasicBase(Structure):
-    _fields_ = [            ('basic1',    ctypes.c_uint16) ,
-                            ('basic2',    ctypes.c_uint16) ]
+    _fields_ = [             ]
     def toPythonDic(self):
         return self.toDict(self,self._fields_)
     def toDict(self,object,inData):
@@ -21,6 +20,8 @@ class StructBasicBase(Structure):
         for field in inData :
             value = None
             key = field[0]
+            valueType = field[1]
+            print "dict check key ->%s %s"%(key,valueType)
             if hasattr(object,key):
                 value  = getattr(object,key)
             else :
@@ -35,6 +36,7 @@ class StructBasicBase(Structure):
             elif type(value)  == type( c_uint64 ):
                 result[key]= value
             elif isinstance(value , ctypes.Array) :
+                print "to list - > %s"%value
                 result[key] =  self.toList(value)
             elif isinstance(value,ctypes.Structure):
                 result[key] = self.toDict(value,value._field_)
@@ -43,13 +45,21 @@ class StructBasicBase(Structure):
     def toList(self,inData):
         result = []
         for value in inData :
+            print "check list value ->%s "%(value)
+
+            print type(value)
+            print type( c_uint64 )
+            print isinstance(value,long)
             if type(value) == type(c_uint8):
                 result.append( value )
             elif type(value)  == type( c_uint16 ):
                 result.append( value )
             elif type(value)  == type( c_uint32 ):
                 result.append( value )
-            elif type(value)  == type( c_uint64 ):
+            elif type(value ) in ['long'] :
+                result.append( value )
+            elif isinstance(value,long): #uint64
+                print "long??"
                 result.append( value )
             elif isinstance(value , ctypes.Array) :
                 result.append(self.toList(value))
@@ -109,7 +119,7 @@ class StructBasicBase(Structure):
 
 class StrucAdvanceBase(StructBasicBase):
     _fields_ = [
-                    ('advance1',    ctypes.c_uint32*2),
+                    ('advance1',    ctypes.c_uint *2),
                     ('advance2',    ctypes.c_uint32),
                     # ('subClass',      (StructBasicBase*3) )
                       ]
@@ -232,10 +242,10 @@ if __name__ == "__main__" :
     pprint.pprint(  advance.toPythonDic() )
     print "advence to steam"
 
-    print advance.getUint8(0x12)
-    print advance.getUint16(0x1234)
-    print advance.getUint32(0x12345678)
-    print advance.getUint64(0x1234567890abcdef)
+    # print advance.getUint8(0x12)
+    # print advance.getUint16(0x1234)
+    # print advance.getUint32(0x12345678)
+    # print advance.getUint64(0x1234567890abcdef)
     # stream =   struct2stream(advance)
     # print repr(stream)
     # print repr(stream[4:])

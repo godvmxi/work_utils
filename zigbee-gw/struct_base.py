@@ -60,10 +60,29 @@ class StructBase(object):
     def __toDict(self,obj):
         result = {}
         for name,type ,num in obj._define_ :
-            if num == 0:
+            if num == 1:
+                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    result[name] = obj.__getattribute__(name)
+                else :
+                    result[name] = obj.toDict()
                 pass
+            elif num > 1 :
+                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    value = []
+                    print obj.__getattribute__( name )
+                    for i in range (0,num) :
+                        value.append( obj.__getattribute__( name )[i]  )
+                    result[name] = value
+                else :
+                    value = []
+                    for i in range(0,num) :
+                        value.append(obj.__getattribute__(name)[i].toDict())
+                    result[name] = value
             else :
+                print "dsfasdafsd"
                 pass
+
+        return result
     def __toList(self,obj):
         pass
     def loadDict(self,dic):
@@ -103,8 +122,9 @@ class StructCmdHeader(StructBase):
     ]
 if __name__ == "__main__" :
     test =  StructCmdHeader()
-    test.test1 = 1
-    test.test2 = 2
+    test.test2 =[ 2,3]
     test.test3 = 3
+    test.test4[0].test1 = 3456
+    test.test4[1].test1 = 5678
     print test.toDict()
     print test.getSize()

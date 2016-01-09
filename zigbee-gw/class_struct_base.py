@@ -29,10 +29,21 @@ class StructBasicBase(Structure):
     def toJson(self):
         return json.dumps(self.toDict())
     def toRaw(self):
-        return None
+        return buffer(self)[:]
+        length = ctypes.sizeof(self)
+        #print length
+        p       = ctypes.cast(ctypes.pointer(self), ctypes.POINTER(ctypes.c_char*length ) )
+        # print p
+        # print str(p.contents.raw)
+        return p.contents.raw
+
+    def toHexRaw(self):
+        return  self.toRaw()
     def loadRaw(self):
         pass
     def loadJson(self,js):
+        pass
+    def showCharArray(self):
         pass
 
 
@@ -100,8 +111,62 @@ def stream2struct(string, stype):
     stream.raw  = string
     p           = ctypes.cast(stream, ctypes.POINTER(stype))
     return p.contents
+class CmdTime(StructBasicBase):
+    _fields_ = [
+                    ('hour',     ctypes.c_uint8),
+                    ('minute',     ctypes.c_uint8),
+                    ('second',     ctypes.c_uint8)
+                ]
+class CmdHeader(StructBasicBase):
+
+    _fields_ = [
+                    ('cmdType',    ctypes.c_uint8),
+                    ('hash',    ctypes.c_uint8),
+                    ('length',     ctypes.c_uint16),
+                    ('counter',     ctypes.c_uint8),
+                    # ('time',CmdTime),
+                    ('timeHour',     ctypes.c_uint8),
+                    ('timeMinute',     ctypes.c_uint8),
+                    ('timeSecond',     ctypes.c_uint8),
+                    ('srcGroupId',     ctypes.c_uint16),
+                    ('srcDeviceId',     ctypes.c_uint16),
+                    ('desDeviceId',     ctypes.c_uint16),
+                    ('desDeviceId',     ctypes.c_uint16),
+                    ]
+
+
+class CmdNodeSetupRequest(StructBasicBase):
+    _fields_ = [
+                    ('deviceType',    ctypes.c_uint32),
+                    ('ieee',         ctypes.c_uint64)
+                    ]
+
 
 if __name__ == "__main__" :
+    cmdHeader = CmdHeader()
+    cmdHeader.cmdType = 0x01
+    cmdHeader.hash = 0x02
+    cmdHeader.length = 0x03
+    cmdHeader.counter =  0x04
+    # cmdHeader.time.hour = 0x05
+    # cmdHeader.time.minute = 0x06
+    # cmdHeader.time.second = 0x07
+    cmdHeader.srcGroupId= 0x08
+    cmdHeader.srcDeviceId = 0x09
+    cmdHeader.desGroupId= 0x0A
+    cmdHeader.desDeviceId = 0x0B
+
+
+    print cmdHeader.toDict()
+    stream =  struct2stream(cmdHeader)
+    print "stream len-> ",len(stream)
+    print repr(stream)
+    stream  = cmdHeader.toHexRaw()
+    print "stream len-> ",len(stream)
+    print repr(stream)
+
+
+    exit()
     basic = StructBasicBase()
     basic.basic1 = (0xFFEE)
     basic.basic2 = (0xDDCC)

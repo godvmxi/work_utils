@@ -14,8 +14,8 @@ class SerialUtils():
         buffer= os.popen("ls /dev/ttyUSB*").readlines()
         #print buffer
         self.serialList = []
-        self.readQueue  =  Queue.Queue(maxsize = 10)
-        self.writeQueue =  Queue.Queue(maxsize = 10)
+        self.readQueue  =  Queue.Queue(maxsize = 20)
+        self.writeQueue =  Queue.Queue(maxsize = 20)
         self.curReadBuf = ""
         self.curWriteBuf = ""
         self.reStr ='[0-9a-z*#]'
@@ -48,11 +48,11 @@ class SerialUtils():
         self.logging( "wait for uart data")
         while True:
 
-            num =  Com.serialHandler.inWaiting()
+            num = self.serialHandler.inWaiting()
             if num < 10 :
                 time.sleep(0.1)
                 #continue
-            buf =  Com.serialHandler.read(num)
+            buf =  self.serialHandler.read(num)
             if len(buf) != 0:
                 pass
                 print "in -> %s" %repr(buf)
@@ -69,7 +69,7 @@ class SerialUtils():
             strListSize =  len(strList)
 
             indexList =    range(0,strListSize)
-            print "list -> %s %s %s"%(strListSize,strList,indexList)
+            #print "list -> %s %s %s"%(strListSize,strList,indexList)
             for index in range(0,strListSize):
                 temp = strList[index]
                 tempLen = len(temp)
@@ -80,24 +80,32 @@ class SerialUtils():
                         if (buf[0] != '*' ):
                             # print "index 0 not new "
                             # self.curReadBuf =  "%s%s"%(self.curReadBuf,temp)
-                            if tempLen[tempLen-1] == '#':
-                                self.readQueue.put('*'+self.curReadBuf)
+                            if temp[tempLen-1] == '#':
+                                put_data = "*%s"%(self.curReadBuf)
+                                print("put -> %d:%s"%(len(put_data),put_data))
+                                self.readQueue.put(put_data)
                                 self.curReadBuf = ''
                         else :
                             if temp[tempLen-1] == '#':
-                                self.readQueue.put('*'+self.curReadBuf)
+                                put_data = "*%s"%(self.curReadBuf)
+                                print("put -> %d:%s"%(len(put_data),put_data))
+                                self.readQueue.put(put_data)
                             self.curReadBuf = ""
                     else:
                         # print "index 0 0"
                         if len(self.curReadBuf ) != 0:
-                            self.readQueue.put(self.curReadBuf)
+                            put_data = "*%s"%(self.curReadBuf)
+                            print("put -> %d:%s"%(len(put_data),put_data))
+                            self.readQueue.put(put_data)
                             self.curReadBuf = ""
                 elif index == (strListSize-1):
                     # print "last 0 0  ->%d %s"%(tempLen,temp)
                     self.curReadBuf = "%s"%temp
                     # if len(self.curReadBuf ) != 0:
                     if temp[tempLen-1 ] == "#":
-                        self.readQueue.put('*'+self.curReadBuf)
+                        put_data = "*%s"%(self.curReadBuf)
+                        print("put -> %d:%s"%(len(put_data),put_data))
+                        self.readQueue.put(put_data)
                         self.curReadBuf = ''
                     elif len(self.curReadBuf) > self.MAX_BUF_SIZE :
                         self.curReadBuf = ""
@@ -125,11 +133,11 @@ class SerialUtils():
 
             queueSize =  self.readQueue.qsize()
             print "queue size -> %d"%queueSize
-            if (queueSize > 3):
-                for index in range(0,queueSize):
-                    print repr(self.readQueue.get() )
-            print
-            print
+            # if (queueSize > 3):
+            #     for index in range(0,queueSize):
+            #         print repr(self.readQueue.get() )
+            # print
+            # print
 
     def logging(self,msg):
         msg = "SerialUtils->%s"%msg

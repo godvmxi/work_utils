@@ -209,6 +209,8 @@ if __name__  ==  "__main__" :
                     dest="clear",
                     default='n',
                     help="http request type,just support get & post")
+    parser.add_option("-n", "--nettime", action="store_true",
+                    help="try get time from network first")
 
     (options, args) = parser.parse_args()
     print options ,type(options)

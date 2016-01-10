@@ -17,7 +17,12 @@ class CmdUtils():
         self.remoteNetStatus = True
         self.serialHandler =  None
         self.cmdTypeUtils =  CmdTypeUtils()
-
+        self.logger = None
+    def log(self,message):
+        if self.logger == None :
+            print message
+        else :
+            self.logger.debug(message)
     def readSerialSerialQueue(self):
         while True :
             #print "try read from serial queue"
@@ -120,24 +125,26 @@ class CmdUtils():
         post add data to postHanderList[0]
         if wwwStatus == Ture ,just post to
         '''
-
+        time.sleep(4)
         while True :
-            time.sleep(4)
-            # print "++++++read remote post queue-> %d"%self.remotePostQueue.qsize()
-            if not self.remoteNetStatus :
-                print "remote net down"
-                self.remotePostQueue.get()
-                time.sleep(1)
-            if self.remotePostQueue.qsize() > 0 :
-                buf = self.remotePostQueue.get()
-                # print "read from remote queue -> %s"%buf
-                result = self.parseCmdDataFromHex(buf)
-                if result != None :
-                    self.remotePostHandler.post(result[0],result[1])
+            try:
+                # print "++++++read remote post queue-> %d"%self.remotePostQueue.qsize()
+                if not self.remoteNetStatus :
+                    print "remote net down"
+                    self.remotePostQueue.get()
                     time.sleep(1)
-                    # continue
-            else :
-                time.sleep(4)
+                if self.remotePostQueue.qsize() > 0 :
+                    buf = self.remotePostQueue.get()
+                    # print "read from remote queue -> %s"%buf
+                    result = self.parseCmdDataFromHex(buf)
+                    if result != None :
+                        self.remotePostHandler.post(result[0],result[1])
+                        time.sleep(1)
+                        # continue
+                else :
+                    time.sleep(0.3)
+            except Exception as inst :
+                self.log("%s"%inst)
     def checkNetworkStatus(self):
         while True :
             if self.localGetHandler.check():

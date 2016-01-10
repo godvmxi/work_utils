@@ -22,7 +22,7 @@ class StructBase(object):
         self.keys = []
         self.size = 0  #please align your struct
         for name,type ,num in self._define_ :
-            print name,type ,num
+            #print name,type ,num
             self.keys.append(name)
             if num  ==  1 :
                 if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
@@ -38,7 +38,7 @@ class StructBase(object):
                     self.__setattr__(name,value)
                 else :
                     class_name = "%s()"%type
-                    print class_name
+                   # print class_name
                     for i in range(0,num):
                         value.append(eval(class_name))
                     self.__setattr__(name,value)
@@ -71,7 +71,7 @@ class StructBase(object):
             elif num > 1 :
                 if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     value = []
-                    print obj.__getattribute__( name )
+                    #print obj.__getattribute__( name )
                     for i in range (0,num) :
                         value.append( obj.__getattribute__( name )[i]  )
                     result[name] = value
@@ -81,7 +81,7 @@ class StructBase(object):
                         value.append(obj.__getattribute__(name)[i].toDict())
                     result[name] = value
             else :
-                print "dsfasdafsd"
+                raise Exception("wrong define number")
                 pass
         self.size = self.getSize()
         return result
@@ -123,7 +123,7 @@ class StructBase(object):
             else :
                 raise Exception("wrong define number")
                 pass
-        print result
+        # print result
         return ''.join(result)
 
     def bin2Hex(self,type,value,littleEnd = False):
@@ -170,9 +170,9 @@ class StructBase(object):
                     hexStr = hexString[stringIndex:stringIndex+hexStrSize]
                     stringIndex = stringIndex + hexStrSize
 
-                    subObj = getattr(obj,name)
-                    subObj = self.hex2Bin(type,hexStr)
-                    # setattr(name ,value)
+                    # subObj = getattr(obj,name)
+                    temp = self.hex2Bin(type,hexStr)
+                    setattr(obj,name ,temp)
                 else :
                     subObj = getattr(obj,name)
                     hexStrSize = 2*(subObj.getSize()  )
@@ -254,17 +254,25 @@ if __name__ == "__main__" :
     header.srcDeviceId = 0x0B0C
     header.desGroupId = 0x090A
     header.desDeviceId = 0x0B0C
-    print header.toDict()
+    print  "----------------dump hex-----------------------------"
+    dictValue =  header.toDict()
+    print dictValue
     print header.getSize()
     hexString =  header.toHex()
     print hexString
-    print  "----------------load-----------------------------"
+    print  "----------------load hex and dump check-----------------------------"
 
-    loadHeader =  StructCmdHeader()
-    loadHeader.loadHex(hexString)
-    print header.toDict()
-    print header.getSize()
-    print header.toHex()
+    loadHexHeader =  StructCmdHeader()
+    loadHexHeader.loadHex(hexString)
+    print loadHexHeader.toDict()
+    print loadHexHeader.getSize()
+    print loadHexHeader.toHex()
 
+    print "----------------load dict and dump check-----------------------------"
+    loadDictHeader =  StructCmdHeader()
+    loadDictHeader.loadDict(dictValue)
+    print loadDictHeader.toDict()
+    print loadDictHeader.getSize()
+    print loadDictHeader.toHex()
 
 

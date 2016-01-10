@@ -7,6 +7,24 @@ import time
 import hashlib
 import urllib
 import urllib2
+class StructTime(StructBase):
+    _define_ =  [
+       ("hour",1,1),
+       ("minute",1,1),
+       ("second",1,1)
+    ]
+class StructCmdHeader(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 ),
+        ('length',      2,              1 ),
+        ('counter',     1,              1 ),
+        ('time',        'StructTime',   1 ),
+        ('srcGroupId',  2,              1 ),
+        ('srcDeviceId', 2,              1 ),
+        ('desDeviceId', 2,              1 ),
+        ('desDeviceId', 2,              1 ),
+    ]
 class HashUtils():
     salt = "660235c0d59758ccc33d9c969d8c1643"
     def __init__(self):

@@ -37,7 +37,7 @@ class CmdUtils():
             time.sleep(3)
             try :
                 dat = self.serialHandler.readItem()
-                print "read S-queue->%s"%dat
+                # print "read S-queue->%s"%dat
             except Exception as inst :
                 print ("read serial exception -> %s"%inst)
             if dat !=  None :
@@ -48,7 +48,6 @@ class CmdUtils():
                     print "put local queue->%d"%self.localPostQueue.qsize()
                 if self.remoteNetStatus :
                     print "put remote queue->%d"%self.remotePostQueue.qsize()
-
                     self.remotePostQueue.put(dat)
             else :
                 time.sleep(2)
@@ -116,14 +115,14 @@ class CmdUtils():
 
         while True :
             time.sleep(4)
-            print "++++++read remote post queue-> %d"%self.remotePostQueue.qsize()
+            # print "++++++read remote post queue-> %d"%self.remotePostQueue.qsize()
             if not self.remoteNetStatus :
                 print "remote net down"
                 self.remotePostQueue.get()
                 time.sleep(1)
             if self.remotePostQueue.qsize() > 0 :
                 buf = self.remotePostQueue.get()
-                print "read from remote queue -> %s"%buf
+                # print "read from remote queue -> %s"%buf
                 header =  buf[1:self.headerSize+1]
                 content = buf[self.headerSize+1:-2]
                 head = StructHeader()
@@ -152,7 +151,7 @@ class CmdUtils():
         while True :
             self.remotePostQueue.get()
             time.sleep(1)
-            pass
+
 
     def parse_header(self,rawData):
         return None

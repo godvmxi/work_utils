@@ -19,7 +19,6 @@ def  mainLoop():
     # 1:get -> json ->struct ->
     serial_handler = SerialUtils()
     serial_handler.open()
-    print "dfasdfdas"
     local_http_handler = HttpUtils()
     parse_handler = CmdUtils()
     parse_handler.localNetStatus = False
@@ -33,7 +32,7 @@ def  mainLoop():
     }
     print serial_handler
     parse_handler.setHandler(netHandler)
-    print "dfasdfdas"
+
     thread_dict = {}
     thread_dict["serial_write"]  = threading.Thread(target=serial_handler.writeLoop )
 
@@ -44,10 +43,10 @@ def  mainLoop():
     thread_dict["data_parse"]   = threading.Thread(target=parse_handler.readSerialSerialQueue)
 
     thread_dict["remote_post"]  = threading.Thread(target=parse_handler.readPostRemoteLoop)
-    #thread_dict["server_get"]   = threading.Thread(target=parse_handler.getRemoteWriteLoop)
+    # thread_dict["server_get"]   = threading.Thread(target=parse_handler.getRemoteWriteLoop)
     # thread_dict["net_status"] =  threading.Thread(target=local_http_handler.check)
-    print thread_dict
-    print "thread init over ,try start"
+
+
 
     for key in thread_dict.keys() :
 

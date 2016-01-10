@@ -21,8 +21,8 @@ class HttpUtils():
             req = urllib2.Request(url = self.posturi,data =dat)
             res_data = urllib2.urlopen(req)
             res = res_data.read()
-            print type(res)
-            print  res_data
+            # print type(res)
+            # print  res_data
             return True
         except:
             return False

@@ -318,6 +318,119 @@ class StructHeader(StructBase):
         ('desGroupId', 2,              1 ),
         ('desDeviceId', 2,              1 ),
     ]
+class CmdSetupParaRequest(StructBase) :
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdSetupParaSet(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdActiveControllerSet(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdActionCollect(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdWorkingParaRequest(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdControllerParaSet(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdSwitchParaSet(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdSyncTimeSet(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdPermissionSet(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdForceNodeRegist(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdSwitchState(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+class CmdControllerState(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 )]
+    pass
+
+class CmdTypeUtils():
+    cmd_setup_para_requset          = 0x01
+    cmd_setup_para_set              = 0x02
+    cmd_active_controller_set       = 0x04
+    cmd_action_collect              = 0x05
+    cmd_working_para_request        = 0x06
+    cmd_controller_para_set         = 0x07
+    cmd_switch_papa_set             = 0x08
+    cmd_sync_time_set               = 0x09
+    cmd_permisson_set               = 0x0A
+    cmd_force_node_regist           = 0x0B
+    cmd_switch_state                = 0x0C
+    cmd_controller_state            = 0x0D
+    def __init__(self):
+        pass
+    def getCmdDataObject(self,cmdType):
+        className = None
+        if cmdType == self.cmd_setup_para_requset:
+            self.className = "CmdSetupParaRequest"
+        elif cmdType ==  self.cmd_setup_para_set :
+            self.className = "CmdSetupParaSet"
+        elif cmdType ==  self.cmd_active_controller_set :
+            self.className = "CmdActiveControllerSet"
+        elif cmdType ==  self.cmd_action_collect :
+            self.className = "CmdActionCollect"
+        elif cmdType ==  self.cmd_working_para_request :
+            self.className = "CmdWorkingParaRequest"
+        elif cmdType ==  self.cmd_controller_para_set :
+            self.className = "CmdControllerParaSet"
+        elif cmdType ==  self.cmd_switch_papa_set :
+            self.className = "CmdSwitchParaSet"
+        elif cmdType ==  self.cmd_sync_time_set :
+            self.className = "CmdSyncTimeSet"
+        elif cmdType ==  self.cmd_permisson_set :
+            self.className = "CmdPermissionSet"
+        elif cmdType ==  self.cmd_force_node_regist :
+            self.className = "CmdForceNodeRegist"
+        elif cmdType ==  self.cmd_switch_state :
+            self.className = "CmdSwitchState"
+        elif cmdType ==  self.cmd_controller_state :
+            self.className = "CmdControllerState"
+        else:
+            pass
+
+        if self.className == None :
+            return None
+        else :
+            self.className = "%s()"%self.className
+            return eval(self.className)
+    def getCurClassName(self):
+        return self.className
+
 
 if __name__ == "__main__" :
     header =  StructCmdHeaderTest()

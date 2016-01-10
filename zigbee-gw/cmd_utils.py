@@ -5,19 +5,6 @@ import time
 import Queue
 import pprint
 from cmd_define import *
-class CmdTypeDefine():
-    cmd_node_setup_requset          = 0x01
-    cmd_node_setup_para_set         = 0x02
-    cmd_active_controller_set       = 0x04
-    cmd_action_collect              = 0x05
-    cmd_node_working_para_request   = 0x06
-    cmd_controller_para_set         = 0x07
-    cmd_switch_papa_set             = 0x08
-    cmd_server_check_time           = 0x09
-    cmd_node_permisson_set          = 0x0A
-    cmd_force_node_regist           = 0x0B
-    cmd_switch_state                = 0x0C
-    cmd_controller_state            = 0x0D
 
 class CmdUtils():
     def __init__(self):
@@ -44,11 +31,11 @@ class CmdUtils():
                 print "read data -> %s"%dat
                 if self.localNetStatus :
 
-                    self.localPostQueue.put(dat)
+                    self.localPostQueue.put(dat[1:-1])
                     print "put local queue->%d"%self.localPostQueue.qsize()
                 if self.remoteNetStatus :
                     print "put remote queue->%d"%self.remotePostQueue.qsize()
-                    self.remotePostQueue.put(dat)
+                    self.remotePostQueue.put(dat[1:-1])
             else :
                 time.sleep(2)
 
@@ -106,7 +93,19 @@ class CmdUtils():
             header.loadHex(buf[1:-2])
             jsonData = header.toJson()
             self.localPostHandler.post(jsonData)
-
+    def parseCmdDataFromHex(self,hexBuf):
+        header =  hexBuf[:self.headerSize]
+        content = hexBuf[self.headerSize:]
+        print hexBuf
+        print header
+        print content
+        print
+        head = StructHeader()
+        head.loadHex(header)
+        body = {}
+        # print head.toDict()
+        print len(hexBuf),len(header),len(content),self.headerSize
+        return [head.toDict(),body]
     def readPostRemoteLoop(self):
         '''
         post add data to postHanderList[0]
@@ -123,15 +122,11 @@ class CmdUtils():
             if self.remotePostQueue.qsize() > 0 :
                 buf = self.remotePostQueue.get()
                 # print "read from remote queue -> %s"%buf
-                header =  buf[1:self.headerSize+1]
-                content = buf[self.headerSize+1:-2]
-                head = StructHeader()
-                head.loadHex(header)
-                body = {}
-                # print head.toDict()
-                # print len(buf),len(header),len(content),self.headerSize
-                self.remotePostHandler.post(head.toDict(),body)
-
+                result = self.parseCmdDataFromHex(buf)
+                if result != None :
+                    self.remotePostHandler.post(result[0],result[1])
+                    time.sleep(1)
+                    # continue
             else :
                 time.sleep(4)
     def checkNetworkStatus(self):

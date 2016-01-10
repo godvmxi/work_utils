@@ -3,6 +3,7 @@ import json
 import pprint
 import binascii
 
+
 class StructBase(object):
     '''
     _define_ :define  struct , size of value by byte ,
@@ -59,17 +60,17 @@ class StructBase(object):
         return self.__toDict(self)
     def __toDict(self,obj):
         result = {}
-        for name,type ,num in obj._define_ :
-            # print "check- >",name,type,num
+        for name,valueType ,num in obj._define_ :
+            # print "check- >",name,valueType,num
             if num == 1:
-                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     result[name] = obj.__getattribute__(name)
                 else :
                     value = obj.__getattribute__(name)
                     result[name] = value.toDict()
                 pass
             elif num > 1 :
-                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     value = []
                     #print obj.__getattribute__( name )
                     for i in range (0,num) :
@@ -86,9 +87,67 @@ class StructBase(object):
         self.size = self.getSize()
         return result
 
-    def loadDict(self,dic):
+    def loadDict(self,dicData):
+        if not isinstance(dicData,dict) :
+            raise Exception("load value must be dict object")
+        self.__loadDict(self,dicData)
         pass
+    def __str__(self):
+        return self.__class__.__name__
+    def __loadDict(self,obj,dicValue):
+        # print "++++++++++++++++++++++++"
+        # print "handler class -> %s "%(obj._define_ )
+        # print dicValue
+        # print "items ???-> ",dicValue.keys()
+        # print type(dicValue)
+        for name,valueType ,num in obj._define_ :
+            print name,valueType ,num
+            if num == 1:
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    # print "--->",getattr(dictValue,name)
+                    if dicValue.has_key(name) :
+                        value  = dicValue[name]
+                        setattr(obj,name ,value)
+                    else :
+                        # print "??????????"
+                        raise Exception("dic has no target key item -> %s"%name)
+                else :
+                    if dicValue.has_key(name) :
+                        # print "get sub dict"
 
+                        subObj = getattr(obj,name)
+
+                        value  = dicValue[name]
+
+                        # print "load sub dict -> %s"%subObj
+                        # print  "load dict -> %s"%value
+                        subObj.loadDict(value)
+                        # setattr(obj,name ,subObj)
+                    else :
+                        raise Exception("dic has no target key item -> %s"%name)
+                pass
+            elif num > 1 :
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    subObjList = getattr(obj,name)
+
+
+                    # print value
+                    result = []
+                    for i in range (0,num) :
+                        hexStr = hexString[stringIndex:stringIndex+hexStrSize]
+                        stringIndex = stringIndex + hexStrSize
+                        listItem = self.hex2Bin(valueType,hexStr)
+                        subObjList[i] = listItem
+                else :
+                    subObjList = getattr(obj,name)
+                    hexStrSize = 2*(subObjList[1].getSize()  )
+                    for i in range(0,num) :
+                        hexStr = hexString[stringIndex:stringIndex+hexStrSize]
+                        stringIndex = stringIndex + hexStrSize
+                        subObjList[i].loadHex(hexStr)
+            else :
+                raise Exception("wrong define number")
+        pass
     def sizeof(self):
         return  self.size
     def toJson(self):
@@ -99,22 +158,22 @@ class StructBase(object):
         return self.__toHex(self)
     def __toHex(self,obj):
         result = []
-        for name,type ,num in obj._define_ :
+        for name,valueType ,num in obj._define_ :
             if num == 1:
-                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
-                    result.append(self.bin2Hex(type,getattr(obj,name)))
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    result.append(self.bin2Hex(valueType,getattr(obj,name)))
                 else :
                     value = obj.__getattribute__(name)
                     result.append(value.toHex())
                 pass
             elif num > 1 :
-                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     # result.append("")
                     # print obj.__getattribute__( name )
                     value = getattr(obj,name)
                     # print value
                     for i in range (0,num) :
-                        result.append( self.bin2Hex(type ,value[i]  ) )
+                        result.append( self.bin2Hex(valueType ,value[i]  ) )
 
                 else :
                     value = getattr(obj,name)
@@ -126,28 +185,28 @@ class StructBase(object):
         # print result
         return ''.join(result)
 
-    def bin2Hex(self,type,value,littleEnd = False):
-        if type in [0x01,0x11] :
+    def bin2Hex(self,valueType,value,littleEnd = False):
+        if valueType in [0x01,0x11] :
             return  self.getUint8(value)
-        elif type in [0x02,0x12] :
+        elif valueType in [0x02,0x12] :
             return  self.getUint16(value)
-        elif type in [0x04,0x14] :
+        elif valueType in [0x04,0x14] :
             return  self.getUint32(value)
-        elif type in [0x08,0x18] :
+        elif valueType in [0x08,0x18] :
             return  self.getUint64(value)
         else :
-            raise Exception("wrong data type")
-    def hex2Bin(self,type,value):
-        if type in [0x01,0x11] :
+            raise Exception("wrong data valueType")
+    def hex2Bin(self,valueType,value):
+        if valueType in [0x01,0x11] :
             return  int(value,16)
-        elif type in [0x02,0x12] :
+        elif valueType in [0x02,0x12] :
             return  int(value,16)
-        elif type in [0x04,0x14] :
+        elif valueType in [0x04,0x14] :
             return  int(value,16)
-        elif type in [0x08,0x18] :
+        elif valueType in [0x08,0x18] :
             return  int(value,16)
         else :
-            raise Exception("wrong data type")
+            raise Exception("wrong data valueType")
     def loadRaw(self):
         pass
     def loadHex(self,hexString):
@@ -155,23 +214,18 @@ class StructBase(object):
         if len(hexString) < self.size :
             raise Exception("%s-> the length can not short than the  double size"%self)
         self.__loadHex(self,hexString)
-    def getValueFromHex(self,type,value):
-        '''
-        type : sizeof of value
-        value ,hex data of bin
-        '''
-        pass
+
     def __loadHex(self,obj,hexString):
         stringIndex = 0
-        for name,type ,num in obj._define_ :
+        for name,valueType ,num in obj._define_ :
             if num == 1:
-                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
-                    hexStrSize = 2*( ( type & 0x0F )  )
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    hexStrSize = 2*( ( valueType & 0x0F )  )
                     hexStr = hexString[stringIndex:stringIndex+hexStrSize]
                     stringIndex = stringIndex + hexStrSize
 
                     # subObj = getattr(obj,name)
-                    temp = self.hex2Bin(type,hexStr)
+                    temp = self.hex2Bin(valueType,hexStr)
                     setattr(obj,name ,temp)
                 else :
                     subObj = getattr(obj,name)
@@ -185,16 +239,16 @@ class StructBase(object):
                     # setattr(name ,value)
                 pass
             elif num > 1 :
-                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     subObjList = getattr(obj,name)
-                    hexStrSize = 2*( ( type & 0x0F )  )
+                    hexStrSize = 2*( ( valueType & 0x0F )  )
 
                     # print value
                     result = []
                     for i in range (0,num) :
                         hexStr = hexString[stringIndex:stringIndex+hexStrSize]
                         stringIndex = stringIndex + hexStrSize
-                        listItem = self.hex2Bin(type,hexStr)
+                        listItem = self.hex2Bin(valueType,hexStr)
                         subObjList[i] = listItem
                 else :
                     subObjList = getattr(obj,name)
@@ -223,6 +277,9 @@ class StructBase(object):
         return "%s%s"%(self.getUint16(value>>16),self.getUint16(value & 0x0000FFFF))
     def getUint64(self,value):
         return "%s%s"%(self.getUint16(value>>32),self.getUint16(value & 0x00000000FFFFFFFF))
+    # def __str__(self):
+    #     return self.__class__.__name__
+
 class StructTime(StructBase):
     _define_ =  [
        ("hour",1,1),

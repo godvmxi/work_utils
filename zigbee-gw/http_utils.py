@@ -4,6 +4,7 @@ import  urllib
 import common_utils
 import json
 from common_utils import  HashUtils
+from cmd_define import *
 
 class HttpUtils():
     def __init__(self,hostname = None ,uri = None):
@@ -14,13 +15,17 @@ class HttpUtils():
         print dat
         # test_data_urlencode  = urllib.urlencode(dat)
         # print test_data_urlencode
-        print "post data"
-        print dat
-        req = urllib2.Request(url = self.posturi,data =dat)
-        res_data = urllib2.urlopen(req)
-        print "return ->"
-        res = res_data.read()
-        print res
+        # print "post data"
+        # print dat
+        try :
+            req = urllib2.Request(url = self.posturi,data =dat)
+            res_data = urllib2.urlopen(req)
+            res = res_data.read()
+            print type(res)
+            print  res_data
+            return True
+        except:
+            return False
     def __getData(self,url):
         response  = urllib2.urlopen(url)
 
@@ -57,10 +62,22 @@ class HttpUtils():
         page = response.read()
 
         return False
-    def post(self,jsonData):
-        self.__postData(jsonData)
+    def post(self,cmdHeader,cmdData):
+        cmdAll = {
+            "header":cmdHeader,
+            "content" : cmdData
+        }
+        rawStr =  json.dumps(cmdAll)
+        sign =  HashUtils.calMd5hash(rawStr)
+        jsonData = {
+            "sign": sign,
+            "body" : rawStr
+        }
 
-        pass
+        print jsonData
+        result   = self.__postData(json.dumps(jsonData) )
+        print "+++++++++++++>",result
+        return
     def get(self):
         return self.__getData(self.getUri)
     def deleteOid(self,oid):
@@ -74,7 +91,7 @@ class HttpUtils():
             return None
         page = response.read()
         return page
-        jsonDat = json.loads(page)
+        #jsonDat = json.loads(page)
 
 
 if __name__ == "__main__":
@@ -82,7 +99,19 @@ if __name__ == "__main__":
     postHandler =  HttpUtils()
     checkHandler = HttpUtils()
 
-    temp = getHandler.get()
-    print getHandler.deleteOid(temp[1])
-    print getHandler.check()
+    # temp = getHandler.get()
+    # print getHandler.deleteOid(temp[1])
+    # print getHandler.check()
     # getHandler.post()
+    cmdHeader = StructHeader()
+
+    headerDict = cmdHeader.toDict()
+    rawStr =  json.dumps(headerDict)
+    cmdData=  {}
+    print rawStr
+    sign =  HashUtils.calMd5hash(rawStr)
+    jsonData = {
+        "sign": sign,
+        "body" : rawStr
+    }
+    print postHandler.post(headerDict,cmdData)

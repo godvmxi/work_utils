@@ -3,7 +3,8 @@ __author__ = 'Bright Jiang'
 import os
 import time
 import Queue
-from struct_base import *
+import pprint
+from cmd_define import *
 class CmdTypeDefine():
     cmd_node_setup_requset          = 0x01
     cmd_node_setup_para_set         = 0x02
@@ -64,8 +65,8 @@ class CmdUtils():
         if handler.has_key("remotePost"):
             self.remotePostHandler =  handler['remotePost']
         else :
-            self.localPostHandler =  None
-            self.localNetStatus =  False
+            self.remotePostHandler =  None
+            self.remoteNetStatus =  False
 
         if handler.has_key("localGet"):
             self.localGetHandler =  handler['localGet']
@@ -125,7 +126,13 @@ class CmdUtils():
                 print "read from remote queue -> %s"%buf
                 header =  buf[1:self.headerSize+1]
                 content = buf[self.headerSize+1:-2]
-                print len(buf),len(header),len(content),self.headerSize
+                head = StructHeader()
+                head.loadHex(header)
+                body = {}
+                # print head.toDict()
+                # print len(buf),len(header),len(content),self.headerSize
+                self.remotePostHandler.post(head.toDict(),body)
+
             else :
                 time.sleep(4)
     def checkNetworkStatus(self):

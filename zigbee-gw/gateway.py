@@ -3,8 +3,7 @@
 __author__ = 'Bright Jiang'
 
 from cmd_define import *
-import config_utils
-import cmd_define
+from  config_utils import *
 import signal
 
 import threading

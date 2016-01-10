@@ -1,5 +1,6 @@
 __author__ = 'dandan'
 import json
+import pprint
 class StructBase(object):
     '''
     _define_ :define  struct , size of value by byte ,
@@ -294,7 +295,7 @@ class StructCmdHeaderTest(StructBase):
         ('time',        'StructTimeTest',   1 ),
         ('srcGroupId',  2,              1 ),
         ('srcDeviceId', 2,              1 ),
-        ('desDeviceId', 2,              1 ),
+        ('desGroupId', 2,              1 ),
         ('desDeviceId', 2,              1 ),
     ]
 
@@ -314,7 +315,7 @@ class StructHeader(StructBase):
         ('time',        'StructTime',   1 ),
         ('srcGroupId',  2,              1 ),
         ('srcDeviceId', 2,              1 ),
-        ('desDeviceId', 2,              1 ),
+        ('desGroupId', 2,              1 ),
         ('desDeviceId', 2,              1 ),
     ]
 

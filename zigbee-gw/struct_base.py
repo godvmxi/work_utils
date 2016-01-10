@@ -1,9 +1,5 @@
 __author__ = 'dandan'
 import json
-import pprint
-import binascii
-
-
 class StructBase(object):
     '''
     _define_ :define  struct , size of value by byte ,
@@ -283,13 +279,33 @@ class StructBase(object):
     # def __str__(self):
     #     return self.__class__.__name__
 
+class StructTimeTest(StructBase):
+    _define_ =  [
+       ("hour",1,1),
+       ("minute",1,1),
+       ("second",1,1)
+    ]
+class StructCmdHeaderTest(StructBase):
+    _define_ = [
+        ('cmdType',     1,              1 ),
+        ('hash',        1,              1 ),
+        ('length',      2,              1 ),
+        ('counter',     1,              1 ),
+        ('time',        'StructTimeTest',   1 ),
+        ('srcGroupId',  2,              1 ),
+        ('srcDeviceId', 2,              1 ),
+        ('desDeviceId', 2,              1 ),
+        ('desDeviceId', 2,              1 ),
+    ]
+
 class StructTime(StructBase):
     _define_ =  [
        ("hour",1,1),
        ("minute",1,1),
        ("second",1,1)
     ]
-class StructCmdHeader(StructBase):
+
+class StructHeader(StructBase):
     _define_ = [
         ('cmdType',     1,              1 ),
         ('hash',        1,              1 ),
@@ -301,8 +317,9 @@ class StructCmdHeader(StructBase):
         ('desDeviceId', 2,              1 ),
         ('desDeviceId', 2,              1 ),
     ]
+
 if __name__ == "__main__" :
-    header =  StructCmdHeader()
+    header =  StructCmdHeaderTest()
     header.cmdType = 1
     header.hash  = 0x02
     header.length = 0x0304
@@ -322,14 +339,14 @@ if __name__ == "__main__" :
     print hexString
     print  "----------------load hex and dump check-----------------------------"
 
-    loadHexHeader =  StructCmdHeader()
+    loadHexHeader =  StructCmdHeaderTest()
     loadHexHeader.loadHex(hexString)
     print loadHexHeader.toDict()
     print loadHexHeader.getSize()
     print loadHexHeader.toHex()
 
     print "----------------load dict and dump check-----------------------------"
-    loadDictHeader =  StructCmdHeader()
+    loadDictHeader =  StructCmdHeaderTest()
     loadDictHeader.loadDict(dictValue)
     print loadDictHeader.toDict()
     print loadDictHeader.getSize()

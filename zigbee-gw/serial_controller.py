@@ -47,6 +47,9 @@ class SerialUtils():
     def readLoop(self):
         self.logging( "wait for uart data")
         while True:
+            # print "test"
+            # time.sleep(2)
+            # continue
 
             num = self.serialHandler.inWaiting()
             if num < 10 :
@@ -55,7 +58,7 @@ class SerialUtils():
             buf =  self.serialHandler.read(num)
             if len(buf) != 0:
                 pass
-                print "in -> %s" %repr(buf)
+                #print "in -> %s" %repr(buf)
             else :
                 time.sleep(0.01)
                 continue
@@ -177,11 +180,11 @@ class SerialUtils():
     def writeLoop(self):
         index = 0
         while True :
-            for i in [1,2,3]:
-                item  =  "*helloXXXX%X#"%index
-                print "insert -> %s"%item
-                self.writeItem(item)
-                index = index + 1
+            # for i in [1,2,3]:
+            #     item  =  "*helloXXXX%X#"%index
+            #     print "insert -> %s"%item
+            #     self.writeItem(item)
+            #     index = index + 1
 
 
             #try write data into serial
@@ -206,23 +209,24 @@ if __name__ == "__main__" :
     Com.open()
     threadsList = []
     t1 = threading.Thread(target=Com.readLoop,args=('') )
-    # t2 = threading.Thread(target=Com.writeLoop,args=(""))
+    t2 = threading.Thread(target=Com.writeLoop,args=(""))
     threadsList.append(t1)
     # threadsList.append(t2)
 
 
-    for ts in threadsList :
-        ts.start()
 
-    print "??"
     while True :
         var = input()
         if var == 'c':
             print "try exit"
-            exit(1)
+            exit()
+
     exit(1)
     Com.readLoop()
     while True :
+        # print "test"
+        # time.sleep(2)
+        # continue
         num =  Com.serialHandler.inWaiting()
         if num != 0 :
             print num

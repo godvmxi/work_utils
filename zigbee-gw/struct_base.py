@@ -101,10 +101,10 @@ class StructBase(object):
         # print "items ???-> ",dicValue.keys()
         # print type(dicValue)
         for name,valueType ,num in obj._define_ :
-            print name,valueType ,num
+            # print name,valueType ,num
             if num == 1:
                 if valueType in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
-                    # print "--->",getattr(dictValue,name)
+
                     if dicValue.has_key(name) :
                         value  = dicValue[name]
                         setattr(obj,name ,value)
@@ -150,10 +150,13 @@ class StructBase(object):
         pass
     def sizeof(self):
         return  self.size
+    def loadJson(self,jsonValue):
+        dicValue = json.load(jsonValue)
+        self.loadDict(dicValue)
     def toJson(self):
         return json.dumps(self.toDict())
     def toRaw(self):
-        return buffer(self)[:]
+        return None
     def toHex(self):
         return self.__toHex(self)
     def __toHex(self,obj):

@@ -93,6 +93,7 @@ class CmdUtils():
         '''
 
         while True :
+            print "read local post queue"
             buf = None
             if not self.localNetStatus :
                 self.localPostQueue.get()
@@ -111,11 +112,14 @@ class CmdUtils():
         post add data to postHanderList[0]
         if wwwStatus == Ture ,just post to
         '''
-        if not self.remoteNetStatus :
-            print "remote net down"
-            self.remotePostQueue.get()
-            time.sleep(1)
+
         while True :
+            time.sleep(4)
+            print "++++++read remote post queue-> %d"%self.remotePostQueue.qsize()
+            if not self.remoteNetStatus :
+                print "remote net down"
+                self.remotePostQueue.get()
+                time.sleep(1)
             if self.remotePostQueue.qsize() > 0 :
                 buf = self.remotePostQueue.get()
                 print "read from remote queue -> %s"%buf

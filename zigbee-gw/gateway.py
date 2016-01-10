@@ -44,7 +44,7 @@ def  mainLoop():
 
     thread_dict["data_parse"]   = threading.Thread(target=parse_handler.readSerialSerialQueue)
 
-    thread_dict["server_post"]  = threading.Thread(target=parse_handler.readPostLocalLoop)
+    thread_dict["remote_post"]  = threading.Thread(target=parse_handler.readPostRemoteLoop)
     #thread_dict["server_get"]   = threading.Thread(target=parse_handler.getRemoteWriteLoop)
     # thread_dict["net_status"] =  threading.Thread(target=local_http_handler.check)
     print thread_dict

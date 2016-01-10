@@ -1,7 +1,7 @@
 __author__ = 'dandan'
 import json
 import pprint
-
+import binascii
 
 class StructBase(object):
     '''
@@ -60,11 +60,13 @@ class StructBase(object):
     def __toDict(self,obj):
         result = {}
         for name,type ,num in obj._define_ :
+            print "check- >",name,type,num
             if num == 1:
                 if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     result[name] = obj.__getattribute__(name)
                 else :
-                    result[name] = obj.toDict()
+                    value = obj.__getattribute__(name)
+                    result[name] = value.toDict()
                 pass
             elif num > 1 :
                 if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
@@ -83,21 +85,57 @@ class StructBase(object):
                 pass
 
         return result
-    def __toList(self,obj):
-        pass
+
     def loadDict(self,dic):
         pass
-    def getattribute(self,key):
-        return self.__getattribute__(key)
+
     def sizeof(self):
-        return 0
+        return  self.size
     def toJson(self):
         return json.dumps(self.toDict())
     def toRaw(self):
         return buffer(self)[:]
+    def toHex(self):
+        return self.__toHex(self)
+    def __toHex(self,obj):
+        result = []
+        for name,type ,num in obj._define_ :
+            if num == 1:
+                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    result.append(self.getHexFromType(type,getattr(obj,name)))
+                else :
+                    value = obj.__getattribute__(name)
+                    result.append(value.toHex())
+                pass
+            elif num > 1 :
+                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    # result.append("")
+                    # print obj.__getattribute__( name )
+                    for i in range (0,num) :
+                        result.append( self.getHexFromType(type ,obj.__getattribute__( name )[i]  ) )
 
-    def toHexRaw(self):
-        return  self.toRaw()
+                else :
+
+                    for i in range(0,num) :
+                        result.append(obj.__getattribute__(name)[i].toHex())
+            else :
+                print "dsfasdafsd"
+                pass
+        print result
+        return ''.join(result)
+    def loadHex(self,hex):
+        pass
+    def getHexFromType(self,type,value):
+        if type in [0x01,0x11] :
+            return  self.getUint8(value)
+        elif type in [0x02,0x12] :
+            return  self.getUint16(value)
+        elif type in [0x04,0x14] :
+            return  self.getUint32(value)
+        elif type in [0x08,0x18] :
+            return  self.getUint64(value)
+        else :
+            raise Exception("wrong data type")
     def loadRaw(self):
         pass
     def loadJson(self,js):
@@ -106,25 +144,43 @@ class StructBase(object):
         pass
 
     def getUint8(self,value):
-        return "%2X"%value
+        #return binascii.hexlify(value)
+        result = "%2X"%value
+        if result[0] == ' ':
+             result = '0'+result[1]
+        return result
     def getUint16(self,value):
         return "%s%s"%(self.getUint8(value>>8),self.getUint8(value & 0x00FF))
     def getUint32(self,value):
         return "%s%s"%(self.getUint16(value>>16),self.getUint16(value & 0x0000FFFF))
     def getUint64(self,value):
         return "%s%s"%(self.getUint16(value>>32),self.getUint16(value & 0x00000000FFFFFFFF))
-
+class StructTime(StructBase):
+    _define_ =  [
+       ("hour",1,1),
+       ("minute",1,1),
+       ("second",1,1)
+    ]
 class StructCmdHeader(StructBase):
     _define_ = [
-        ("test2",4,2),
-        ("test3",1,1),
-        ("test4","StructBase",2),
+        ('cmdType',     1,              1 ),
+        ('hash',        2,              1 ),
+        ('length',      2,              1 ),
+        ('counter',     1,              1 ),
+        ('time',        'StructTime',   1 ),
+        ('srcGroupId',  2,              1 ),
+        ('srcDeviceId', 2,              1 ),
+        ('desDeviceId', 2,              1 ),
+        ('desDeviceId', 2,              1 ),
     ]
 if __name__ == "__main__" :
-    test =  StructCmdHeader()
-    test.test2 =[ 2,3]
-    test.test3 = 3
-    test.test4[0].test1 = 3456
-    test.test4[1].test1 = 5678
-    print test.toDict()
-    print test.getSize()
+    header =  StructCmdHeader()
+    header.cmdType = 0x01
+    header.hash  = 0x0203
+    header.length = 0x0405
+    header.counter =  0x06
+    header.time.hour = 0x07
+    header.time.minute = 0x08
+    print header.toDict()
+    # print header.getSize()
+    print header.toHex()

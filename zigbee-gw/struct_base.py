@@ -60,7 +60,7 @@ class StructBase(object):
     def __toDict(self,obj):
         result = {}
         for name,type ,num in obj._define_ :
-            print "check- >",name,type,num
+            # print "check- >",name,type,num
             if num == 1:
                 if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     result[name] = obj.__getattribute__(name)
@@ -83,7 +83,7 @@ class StructBase(object):
             else :
                 print "dsfasdafsd"
                 pass
-
+        self.size = self.getSize()
         return result
 
     def loadDict(self,dic):
@@ -102,7 +102,7 @@ class StructBase(object):
         for name,type ,num in obj._define_ :
             if num == 1:
                 if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
-                    result.append(self.getHexFromType(type,getattr(obj,name)))
+                    result.append(self.bin2Hex(type,getattr(obj,name)))
                 else :
                     value = obj.__getattribute__(name)
                     result.append(value.toHex())
@@ -114,20 +114,19 @@ class StructBase(object):
                     value = getattr(obj,name)
                     # print value
                     for i in range (0,num) :
-                        result.append( self.getHexFromType(type ,value[i]  ) )
+                        result.append( self.bin2Hex(type ,value[i]  ) )
 
                 else :
-
+                    value = getattr(obj,name)
                     for i in range(0,num) :
-                        result.append(obj.__getattribute__(name)[i].toHex())
+                        result.append(value[i].toHex())
             else :
                 raise Exception("wrong define number")
                 pass
         print result
         return ''.join(result)
-    def loadHex(self,hex):
-        pass
-    def getHexFromType(self,type,value):
+
+    def bin2Hex(self,type,value,littleEnd = False):
         if type in [0x01,0x11] :
             return  self.getUint8(value)
         elif type in [0x02,0x12] :
@@ -138,8 +137,75 @@ class StructBase(object):
             return  self.getUint64(value)
         else :
             raise Exception("wrong data type")
+    def hex2Bin(self,type,value):
+        if type in [0x01,0x11] :
+            return  int(value,16)
+        elif type in [0x02,0x12] :
+            return  int(value,16)
+        elif type in [0x04,0x14] :
+            return  int(value,16)
+        elif type in [0x08,0x18] :
+            return  int(value,16)
+        else :
+            raise Exception("wrong data type")
     def loadRaw(self):
         pass
+    def loadHex(self,hexString):
+        string_index = 0;
+        if len(hexString) < self.size :
+            raise Exception("%s-> the length can not short than the  double size"%self)
+        self.__loadHex(self,hexString)
+    def getValueFromHex(self,type,value):
+        '''
+        type : sizeof of value
+        value ,hex data of bin
+        '''
+        pass
+    def __loadHex(self,obj,hexString):
+        stringIndex = 0
+        for name,type ,num in obj._define_ :
+            if num == 1:
+                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    hexStrSize = 2*( ( type & 0x0F )  )
+                    hexStr = hexString[stringIndex:stringIndex+hexStrSize]
+                    stringIndex = stringIndex + hexStrSize
+
+                    subObj = getattr(obj,name)
+                    subObj = self.hex2Bin(type,hexStr)
+                    # setattr(name ,value)
+                else :
+                    subObj = getattr(obj,name)
+                    hexStrSize = 2*(subObj.getSize()  )
+                    # hexStrSize = 2*( value.getSize()  )
+                    hexStr = hexString[stringIndex:stringIndex+hexStrSize]
+                    stringIndex = stringIndex + hexStrSize
+
+                    subObj = getattr(obj,name)
+                    subObj.loadHex(hexStr)
+                    # setattr(name ,value)
+                pass
+            elif num > 1 :
+                if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
+                    subObjList = getattr(obj,name)
+                    hexStrSize = 2*( ( type & 0x0F )  )
+
+                    # print value
+                    result = []
+                    for i in range (0,num) :
+                        hexStr = hexString[stringIndex:stringIndex+hexStrSize]
+                        stringIndex = stringIndex + hexStrSize
+                        listItem = self.hex2Bin(type,hexStr)
+                        subObjList[i] = listItem
+                else :
+                    subObjList = getattr(obj,name)
+                    hexStrSize = 2*(subObjList[1].getSize()  )
+                    for i in range(0,num) :
+                        hexStr = hexString[stringIndex:stringIndex+hexStrSize]
+                        stringIndex = stringIndex + hexStrSize
+                        subObjList[i].loadHex(hexStr)
+            else :
+                raise Exception("wrong define number")
+                pass
     def loadJson(self,js):
         pass
     def showCharArray(self):
@@ -190,4 +256,15 @@ if __name__ == "__main__" :
     header.desDeviceId = 0x0B0C
     print header.toDict()
     print header.getSize()
+    hexString =  header.toHex()
+    print hexString
+    print  "----------------load-----------------------------"
+
+    loadHeader =  StructCmdHeader()
+    loadHeader.loadHex(hexString)
+    print header.toDict()
+    print header.getSize()
     print header.toHex()
+
+
+

@@ -104,14 +104,28 @@ if __name__ == "__main__":
     # print getHandler.check()
     # getHandler.post()
     cmdHeader = StructHeader()
-
-    headerDict = cmdHeader.toDict()
-    rawStr =  json.dumps(headerDict)
-    cmdData=  {}
-    print rawStr
-    sign =  HashUtils.calMd5hash(rawStr)
-    jsonData = {
-        "sign": sign,
-        "body" : rawStr
-    }
-    print postHandler.post(headerDict,cmdData)
+    #
+    # headerDict = cmdHeader.toDict()
+    # rawStr =  json.dumps(headerDict)
+    # cmdData=  {}
+    # print rawStr
+    # sign =  HashUtils.calMd5hash(rawStr)
+    # jsonData = {
+    #     "sign": sign,
+    #     "body" : rawStr
+    # }
+    # print postHandler.post(headerDict,cmdData)
+    result = getHandler.get()
+    print result
+    unicodestring = result[0]
+    evalString =  eval(unicodestring)
+    print type(evalString),evalString
+    utf8string = unicodestring.encode("utf-8")
+    print "utf8 -> ",utf8string
+    evalString =  eval(utf8string)
+    print type(evalString),evalString
+    print json.loads(utf8string)
+    # asciistring = unicodestring.encode("ascii")
+    # print eval(asciistring)
+    # print "ascii -> ",asciistring
+    # print json.loads(asciistring)

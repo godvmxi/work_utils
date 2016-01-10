@@ -18,6 +18,7 @@ class CmdUtils():
         self.serialHandler =  None
         self.cmdTypeUtils =  CmdTypeUtils()
         self.logger = None
+        self.oidHeaderList = []
     def log(self,message):
         if self.logger == None :
             print message
@@ -159,9 +160,48 @@ class CmdUtils():
                 self.localPostQueue.get()
                 time.sleep(1)
     def getRemoteWriteLoop(self):
+        time.sleep(4)
         while True :
-            self.remotePostQueue.get()
-            time.sleep(1)
+            try:
+                # print "++++++read remote post queue-> %d"%self.remotePostQueue.qsize()
+                if not self.remoteNetStatus :
+                    print "remote net down"
+                    self.remotePostQueue.get()
+                    time.sleep(1)
+                httpGetData  = self.remoteGetHandler.get()
+                if httpGetData != None :
+                    print ")))))))))))))))))))))))))))))))))))"
+                    bodyJsonString =  httpGetData[0]
+                    oid      =  httpGetData[1]
+                    getDataDict = eval(bodyJsonString)
+                    print type(getDataDict),getDataDict
+                    header = StructHeader()
+                    header.loadDict(getDataDict["header"])
+
+                    bodyObject = self.cmdTypeUtils.getCmdDataObject(header.cmdType)
+                    print "cmd type -->  0x%2X  %s"%header.cmdType,self.cmdTypeUtils.getCurClassName()
+                    if bodyObject != None :
+                        bodyObject.loadDict(getDataDict["content"])
+                    else :
+                        bodyObject = None
+                    headerHexStr = header.toHex()
+                    if bodyObject != None :
+                        bodyHexString =  bodyObject.tohex()
+                    else :
+                        bodyHexString = ""
+
+                    targetString =  "*%s%s#"%(headerHexStr,bodyHexString)
+                    print "write item -> %s"%targetString
+                    self.serialHandler.writeItem(targetString)
+                    bodyObject = self.cmdTypeUtils.getCmdDataObject(header.cmdType)
+
+
+                    time.sleep(2)
+            except Exception as inst :
+                self.log("%s"%inst)
+
+
+
 
 
     def parse_header(self,rawData):

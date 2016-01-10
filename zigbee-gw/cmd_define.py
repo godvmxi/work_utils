@@ -280,84 +280,175 @@ class StructBase(object):
     # def __str__(self):
     #     return self.__class__.__name__
 
+''' test demo start'''''
 class StructTimeTest(StructBase):
     _define_ =  [
        ("hour",1,1),
        ("minute",1,1),
-       ("second",1,1)
+       ("second",1,1),
+       ("week",1,1),
     ]
 class StructCmdHeaderTest(StructBase):
     _define_ = [
         ('cmdType',     1,              1 ),
         ('hash',        1,              1 ),
-        ('length',      2,              1 ),
+        ('length',      1,              1 ),
         ('counter',     1,              1 ),
         ('time',        'StructTimeTest',   1 ),
-        ('srcGroupId',  2,              1 ),
-        ('srcDeviceId', 2,              1 ),
-        ('desGroupId', 2,              1 ),
-        ('desDeviceId', 2,              1 ),
+        ('srcGroupId',  1,              1 ),
+        ('srcDeviceId', 1,              1 ),
+        ('desGroupId',  1,              1 ),
+        ('desDeviceId', 1,              1 ),
     ]
-
+''' test demo end'''''
+class StructPermission(StructBase):
+    _define_ = [
+        ('motion',     1,              1 ),
+        ('lux',        1,              1 ),
+        ('distance',      1,              1 ),
+        ('reserved',     1,              1 ),
+        ]
 class StructTime(StructBase):
     _define_ =  [
        ("hour",1,1),
        ("minute",1,1),
-       ("second",1,1)
+       ("second",1,1),
+       ("week",1,1),
     ]
-
+class StructTriggerSource(StructBase):
+    _define_ = [
+        ('groupId',     1,              1 ),
+        ('deviceId',    1,              1 ),
+        ('fromType',    1,              1 ),
+        ('fromOrder',   1,              1 ),
+        ]
+class  StructGroupPara(StructBase):
+    _define_ = [
+        ('groupId',     1,              1 ),
+        ('deviceId',    1,              1 ),
+        ('lampChannelBit',    1,              1 ),
+        ('reserved',    1,              1 ),
+        ]
+class StructSwitchConfigPara(StructBase):
+    _define_ = [
+        ('luxOn',     2,              1 ),
+        ('luxOff',    2,              1 ),
+        ]
+class StructLampCfg(StructBase):
+    _define_ = [
+        ('groupId',     1,              1 ),
+        ('deviceId',    1,              1 ),
+        ('curState',    1,              1 ),
+        ('powerDefault',    1,              1 ),
+        ]
+# class StructTimeControlCfg(StructBase):
+#     _define_ = [
+#         ('week',     1,              1 ),
+#         ('day',     1,              1 ),
+#         ('hour',    1,              1 ),
+#         ('min',     1,              1 ),
+#         ]
+class StructTimeControlCfg(StructBase):
+    _define_ = [
+        ('week',     1,              1 ),
+        ('hour',     1,              1 ),
+        ('hour',    1,              1 ),
+        ('operation',     1,              1 ),
+        ]
+class StructNodeGroupCfg(StructBase):
+    _define_ = [
+        ('groupId',     1,              1 ),
+        ('deviceId',    1,              1 ),
+        ('lampChannelBit',    1,              1 ),
+        ('reserved',    1,              1 ),
+        ]
 class StructHeader(StructBase):
     _define_ = [
         ('cmdType',     1,              1 ),
         ('hash',        1,              1 ),
         ('length',      2,              1 ),
-        ('counter',     1,              1 ),
-        ('time',        'StructTime',   1 ),
-        ('srcGroupId',  2,              1 ),
-        ('srcDeviceId', 2,              1 ),
-        ('desGroupId', 2,              1 ),
-        ('desDeviceId', 2,              1 ),
+        ('counter',     2,              1 ),
+        # ('time',        'StructTime',   1 ),
+        ("hour",        1,              1),
+        ("minute",      1,              1),
+        ("second",      1,              1),
+        ("week",        1,              1),
+        ('srcGroupId',  1,              1 ),
+        ('srcDeviceId', 1,              1 ),
+        ('desGroupId',  1,              1 ),
+        ('desDeviceId', 1,              1 ),
     ]
 class CmdSetupParaRequest(StructBase) :
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
+        ('deviceType',     4,              1 ),
+        ('ieee',           1,              8),
+        ]
     pass
 class CmdSetupParaSet(StructBase):
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
+        ('deviceType',     4,              1 ),
+        ('ieee',           1,              8 ),
+        ('networkPanId',   2,              1 ),
+        ('key',            1,              16 ),
+    ]
     pass
 class CmdActiveControllerSet(StructBase):
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
+        # ('groupId',         1,              1 ),
+        # ('deviceId',        1,              1 ),
+        ('lightLevel',     1,              8 ),
+        ('triggerSource',  "StructTriggerSource",1 )
+    ]
     pass
-class CmdActionCollect(StructBase):
+class CmdActionCollect(StructBase): #no need now
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
-    pass
+        ('groupId',         1,              1 ),
+        ('deviceId',        1,              1 )]
+
 class CmdWorkingParaRequest(StructBase):
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
-    pass
+        ('DeviceType',     1,              1 ),
+        ('ieee',        1,              8 )]
+
 class CmdControllerParaSet(StructBase):
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
-    pass
+        ('groupId',     1,              1 ),
+        ('deviceId',     1,              1 ),
+        ('deviceType',     4,              1 ),
+        ('permission',     4,              1 ),
+        ('groupNum',     2,              1 ),
+        ('groupParaList',     1,              1 ),
+        ]
+
 class CmdSwitchParaSet(StructBase):
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
+        ('groupId',     1,              1 ),
+        ('deviceId',    1,              1 ),
+        ('lightModify',   2,              1 ),
+        ('deviceType',    4,              1 ),
+        ('lampConfig',    'StructLampCfg',1),
+        ('permission',    'StructPermission',              1 ),
+        ('reportInterval',        2,              1 ),
+        ('timeControlParaNum',    2,              1 ),
+        ('timeControlPara',    "StructTimeControlCfg",              8 ),
+        ('switchConfigPara',    'StructSwitchConfigPara',              1 ),
+        ]
     pass
 class CmdSyncTimeSet(StructBase):
     _define_ = [
-        ('cmdType',     1,              1 ),
-        ('hash',        1,              1 )]
+        ('week',     1,              1 ),
+        ('hour',     1,              1 ),
+        ('minute',     1,              1 ),
+        ('second',        1,              1 )]
     pass
+class CmdPermissionPara(StructBase):
+    _define_ = [
+        ('groupId',     1,              1 ),
+        ('deviceId',     1,              1 ),
+        ('deviceType',     4,              1 ),
+        ('permission',        'StructPermission',   1 ),
+        ('timeout',    16 ,              1 )
+        ]
 class CmdPermissionSet(StructBase):
     _define_ = [
         ('cmdType',     1,              1 ),
@@ -377,7 +468,7 @@ class CmdControllerState(StructBase):
     _define_ = [
         ('cmdType',     1,              1 ),
         ('hash',        1,              1 )]
-    pass
+
 
 class CmdTypeUtils():
     cmd_setup_para_requset          = 0x01
@@ -421,6 +512,7 @@ class CmdTypeUtils():
         elif cmdType ==  self.cmd_controller_state :
             self.className = "CmdControllerState"
         else:
+            self.className = None
             pass
 
         if self.className == None :

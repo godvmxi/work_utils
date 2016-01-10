@@ -16,6 +16,7 @@ class CmdUtils():
         self.localNetStatus =  True
         self.remoteNetStatus = True
         self.serialHandler =  None
+        self.cmdTypeUtils =  CmdTypeUtils()
 
     def readSerialSerialQueue(self):
         while True :
@@ -94,18 +95,26 @@ class CmdUtils():
             jsonData = header.toJson()
             self.localPostHandler.post(jsonData)
     def parseCmdDataFromHex(self,hexBuf):
-        header =  hexBuf[:self.headerSize]
-        content = hexBuf[self.headerSize:]
-        print hexBuf
-        print header
-        print content
-        print
-        head = StructHeader()
-        head.loadHex(header)
-        body = {}
+        headerhex =  hexBuf[:self.headerSize]
+        contentHex = hexBuf[self.headerSize:]
+
+        header = StructHeader()
+        header.loadHex(headerhex)
+        headerDict =  header.toDict()
+        bodyDict  ={}
+        print "cmd type -->  0x%2X"%header.cmdType
+        bodyObject = self.cmdTypeUtils.getCmdDataObject(header.cmdType)
+        print "cmd class name ->",self.cmdTypeUtils.getCurClassName()
+        if bodyObject != None :
+            bodyDict =  bodyObject.toDict()
+
+
+
         # print head.toDict()
-        print len(hexBuf),len(header),len(content),self.headerSize
-        return [head.toDict(),body]
+
+        print "cmd type "
+        print len(hexBuf),len(headerhex),len(contentHex),self.headerSize
+        return [headerDict,bodyDict]
     def readPostRemoteLoop(self):
         '''
         post add data to postHanderList[0]

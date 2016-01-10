@@ -111,15 +111,17 @@ class StructBase(object):
                 if type in [0x01,0x02,0x04,0x08,0x11,0x12,0x14,0x18]:
                     # result.append("")
                     # print obj.__getattribute__( name )
+                    value = getattr(obj,name)
+                    # print value
                     for i in range (0,num) :
-                        result.append( self.getHexFromType(type ,obj.__getattribute__( name )[i]  ) )
+                        result.append( self.getHexFromType(type ,value[i]  ) )
 
                 else :
 
                     for i in range(0,num) :
                         result.append(obj.__getattribute__(name)[i].toHex())
             else :
-                print "dsfasdafsd"
+                raise Exception("wrong define number")
                 pass
         print result
         return ''.join(result)
@@ -164,7 +166,7 @@ class StructTime(StructBase):
 class StructCmdHeader(StructBase):
     _define_ = [
         ('cmdType',     1,              1 ),
-        ('hash',        2,              1 ),
+        ('hash',        1,              1 ),
         ('length',      2,              1 ),
         ('counter',     1,              1 ),
         ('time',        'StructTime',   1 ),
@@ -175,12 +177,17 @@ class StructCmdHeader(StructBase):
     ]
 if __name__ == "__main__" :
     header =  StructCmdHeader()
-    header.cmdType = 0x01
-    header.hash  = 0x0203
-    header.length = 0x0405
-    header.counter =  0x06
-    header.time.hour = 0x07
-    header.time.minute = 0x08
+    header.cmdType = 1
+    header.hash  = 0x02
+    header.length = 0x0304
+    header.counter =  0x05
+    header.time.hour = 0x06
+    header.time.minute = 0x07
+    header.time.second = 0x08
+    header.srcGroupId = 0x090A
+    header.srcDeviceId = 0x0B0C
+    header.desGroupId = 0x090A
+    header.desDeviceId = 0x0B0C
     print header.toDict()
-    # print header.getSize()
+    print header.getSize()
     print header.toHex()

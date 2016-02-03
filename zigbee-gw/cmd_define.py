@@ -200,10 +200,13 @@ class StructBase(object):
         if valueType in [0x01,0x11] :
             return  int(value,16)
         elif valueType in [0x02,0x12] :
+            value = "%s%s"%(value[2:4],value[0:2])
             return  int(value,16)
         elif valueType in [0x04,0x14] :
+            value = "%s%s%s%s"%(value[6:8],value[4:6],value[2:4],value[0:2])
             return  int(value,16)
         elif valueType in [0x08,0x18] :
+            value = "%s%s%s%s%s%s%s%s"%(value[14:16],value[12:14],value[10:12],value[8:10],value[6:8],value[4:6],value[2:4],value[0:2])
             return  int(value,16)
         else :
             raise Exception("wrong data valueType")
@@ -557,5 +560,56 @@ if __name__ == "__main__" :
     print loadDictHeader.toDict()
     print loadDictHeader.getSize()
     print loadDictHeader.toHex()
+    header = StructHeader()
+    headerDict = header.toDict()
+    setupParaSet = CmdSetupParaSet()
+    bodyDict =  setupParaSet.toDict()
+    print setupParaSet.toJson()
+    cmd = {
+            "header":headerDict,
+            "content":bodyDict
+    }
+
+    body = {
+        "body":json.dumps(cmd),
+        "sign":"dsfasdf",
+        "oid" : 123
+
+    }
+    print json.dumps(body)
+
+
+    setupParaSet = CmdControllerParaSet()
+    bodyDict =  setupParaSet.toDict()
+    print setupParaSet.toJson()
+    cmd = {
+            "header":headerDict,
+            "content":bodyDict
+    }
+
+    body = {
+        "body":json.dumps(cmd),
+        "sign":"dsfasdf",
+        "oid" : 123
+
+    }
+    print json.dumps(body)
+
+    setupParaSet =  CmdSwitchParaSet()
+    bodyDict =  setupParaSet.toDict()
+    print setupParaSet.toJson()
+    cmd = {
+            "header":headerDict,
+            "content":bodyDict
+    }
+
+    body = {
+        "body":json.dumps(cmd),
+        "sign":"dsfasdf",
+        "oid" : 123
+
+    }
+    print json.dumps(body)
+
 
 

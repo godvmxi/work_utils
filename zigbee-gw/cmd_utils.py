@@ -104,12 +104,15 @@ class CmdUtils():
         headerhex =  hexBuf[:self.headerSize]
         contentHex = hexBuf[self.headerSize:]
 
+        print "headerHex->",headerhex
+        print "contentHex->",contentHex
         header = StructHeader()
         header.loadHex(headerhex)
         headerDict =  header.toDict()
         bodyDict  ={}
         print "cmd type -->  0x%2X"%header.cmdType
         bodyObject = self.cmdTypeUtils.getCmdDataObject(header.cmdType)
+        bodyObject.loadHex(contentHex)
         print "cmd class name ->",self.cmdTypeUtils.getCurClassName()
         if bodyObject != None :
             bodyDict =  bodyObject.toDict()
@@ -212,5 +215,23 @@ class CmdUtils():
     def reset(self):
         self.cmdHeader = {}
         self.cmdBody = {}
+
+if __name__ == "__main__":
+    cmdTypeUtils = CmdTypeUtils()
+    header =  StructHeader()
+    body = cmdTypeUtils.getCmdDataObject(0x01)
+    headerSize =  header.getSize()*2
+    print headerSize
+    testHeader = "01007856000000000000000203041500000009ABC508004B1200"
+    headerHex  = testHeader[:headerSize]
+    bodyHex =  testHeader[headerSize:]
+    print "headerHex->",headerHex,len(headerHex)
+    print "bodyHex->",bodyHex,len(bodyHex)
+    header.loadHex(headerHex)
+    print header.toDict()
+    body.loadHex(bodyHex)
+    print body.toDict()
+    "05000000"
+
 
 

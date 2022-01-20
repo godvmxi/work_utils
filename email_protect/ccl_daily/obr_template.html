@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Daily Build and Test Reports {{ dat.StatusAll }}  </title>
+    <style type="text/css">
+        span.bold {font-weight: bold;}
+        table.noborder {border: 0px; padding: 8px;}
+        td {text-align: left;}
+        div.x_title {
+            font-size: 20px;
+            background: #00AB69;
+            color: #ffffff;
+            padding: 5px;
+            margin-bottom: 5px;
+            }
+        div.x_title2 {
+            font-size: 14px;
+            background: #00AB69;
+            color: #ffffff;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        div.x_title3 {
+            font-size: 14px;
+            color: #00AB69;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        div.x_spec {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        table.x_summary {
+        border-collapse: collapse;
+        }
+        table {
+            font: inherit;
+        }
+        table {
+            display: table;
+            border-collapse: separate;
+            box-sizing: border-box;
+            text-indent: initial;
+            border-spacing: 2px;
+            border-color: grey;
+        }
+        table.noborder {border: 0px; padding: 8px;}
+        td.x1 {text-align: left;
+            border-collapse: collapse;
+            padding: 5px;text-align: center;
+            border: 1px solid rgb(184, 232, 184);
+            background: rgb(240, 250, 240)
+        }
+        td.x2 {text-align: left;
+            border-collapse: collapse;
+            padding: 5px;text-align: center;
+            border: 1px solid rgb(184, 232, 184)
+        }
+        td.fail {
+            color: red;
+            text-align: left;
+            border-collapse: collapse;
+            padding: 5px;text-align: center;
+            border: 1px solid rgb(184, 232, 184)
+        }
+
+
+    </style>
+  </head>
+  <body>
+    
+
+    <div class="x_title" style="padding:5px">Daily Build and Test Reports</div>
+    <table class="x_summary">
+        <tbody>
+            <tr>
+                <td class="x1" >Suite</td>
+                <td class="x1" >Status</td>
+                <td class="x1" >Total</td>
+                <td class="x1" >Pass</td>
+                <td class="x1" >Pass After Reboot</td>
+                <td class="x1" >Fail</td>
+                <td class="x1" >Pend</td>
+                <td class="x1" >NoRun</td>
+            </tr>
+            {% for k,v in dat.Detail.items() %}
+            <tr>
+                <td class="x1" >  {{ k }} </td>
+                <td {% if v.Status == Pass %}
+                        class="x2"
+                    {% else %}
+                        class="fail"
+                    {%  endif %}
+                 >  {{ v.Status }} </td>
+
+                <td class="x2" >  {{ v.PassCases|length + v.PassCasesSecond|length + v.FailCases|length + v.PendingCases|length + v.UnRunCases|length}} </td>
+                <td class="x2" >  {{ v.PassCases|length }} </td>
+                <td class="x2" >  {{ v.PassCasesSecond|length }} </td>
+                <td class="x2" >  {{ v.FailCases|length }} </td>
+                <td class="x2" >  {{ v.PendingCases|length }} </td>
+                <td class="x2" >  {{ v.UnRunCases|length }} </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+
+    
+    <div class="x_title2" style="padding:5px">Error Detail</div>
+    {% for suite_k,suite_v in dat.Detail.items() %}
+    <div class="x_title2" style="padding:5px">{{ suite_k }} Detail</div>
+    <div class="x_title3" style="padding:5px"> Passed After Reboot List</div>
+        <table class="x_summary">
+            <tbody>
+                <tr>
+                    <td class="x1">Case ID</td>
+                    <td class="x1">Detail</td>
+                </tr>
+                {% for case in  suite_v.PassCasesSecond %}
+                <tr>
+                    <td class="x1">  {{ case[0] }} </td>
+                    <td class="x2">  {{ case[1] }} </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+    <div class="x_title3" style="padding:5px"> Fail List</div>
+        <table class="x_summary">
+            <tbody>
+                <tr>
+                    <td class="x1">Case ID</td>
+                    <td class="x1">Detail</td>
+                </tr>
+                {% for case in  suite_v.FailCases %}
+                <tr>
+                    <td class="x1">  {{ case[0] }} </td>
+                    <td class="x2">  {{ case[1] }} </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+    <div class="x_title3" style="padding:5px">Pending List</div>
+        <table class="x_summary">
+            <tbody>
+                <tr>
+                    <td class="x1">Case ID</td>
+                    <td class="x1">Detail</td>
+                </tr>
+                {% for case in  suite_v.PendingCases %}
+                <tr>
+                    <td class="x1">  {{ case[0] }} </td>
+                    <td class="x2">  {{ case[1] }} </td>
+                </tr>
+                {% endfor %}
+        </tbody>
+    </table>
+    <br>
+
+    {% endfor %}
+
+    <div class="x_title" style="padding:5px">Daily Build and Test Reports</div>
+    <table class="x_summary">
+        <tbody>
+            <tr>
+                <td class="x1" >Type</td>
+                <td class="x1" >Detail</td>
+            </tr>
+            <tr>
+                <td class="x1" >Tserver Build Time</td>
+                <td class="x2" >{{ dat.pre_sys_info.BuildTime }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Code Version</td>
+                <td class="x2" >{{ dat.pre_sys_info.GitVersion }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Test Start Time</td>
+                <td class="x2" >{{ dat.pre_sys_info.BuildTime }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Test End Time</td>
+                <td class="x2" >{{ dat.post_sys_info.CollectTs }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Hostname</td>
+                <td class="x2" >{{ dat.pre_sys_info.Hostname }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Bios</td>
+                <td class="x2" >{{ dat.pre_sys_info.BiosVersion }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Project</td>
+                <td class="x2" >{{ dat.pre_sys_info.Project }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Build Time</td>
+                <td class="x2" >{{ dat.pre_sys_info.BuildTime }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Test Directory</td>
+                <td class="x2" >{{ dat.test_dir }}</td>
+            </tr>
+            <tr>
+                <td class="x1" >Diag Portal Job</td>
+		<td class="x2" ><a href="{{ dat.diag_portal_job }}">{{ dat.diag_portal_job }}</a></td>
+            </tr>
+            <tr>
+                <td class="x1" >Diag Portal Task</td>
+		<td class="x2" ><a href="{{ dat.diag_portal_task }}">{{ dat.diag_portal_task }}</a></td>
+            </tr>
+            </tbody>
+    </table>
+    <br>
+
+    <div class="x_title" style="padding:5px">System Info Before Run</div>
+    <table class="x_summary">
+        <tbody>
+            <tr>
+                <td class="x1" >Type</td>
+                <td class="x1" >Detail</td>
+            </tr>
+            <tr>
+                <td class="x1" >CLK</td>
+		<td class="x2" ><pre>{{ dat.pre_sys_info.ClkStatus }}</pre></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <div class="x_title" style="padding:5px">System Info After Run</div>
+    <table class="x_summary">
+        <tbody>
+            <tr>
+                <td class="x1" >Type</td>
+                <td class="x1" >Detail</td>
+            </tr>
+            <tr>
+                <td class="x1" >CLK</td>
+		<td class="x2" ><pre>{{ dat.post_sys_info.ClkStatus }}</pre></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <p>
+      Regards, <br />
+      <br />
+      The VCN team
+    </p>
+
+  </body>
+</html>

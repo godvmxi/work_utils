@@ -1,0 +1,51 @@
+{
+    "diag_dir": "/root/diag/",
+    "backup_dir" : "/root/diag_backup/",
+    "clean_up_days" : 7,
+    "done_flag_file" : "done.flag",
+    "abort_flag_file" : "abort.flag",
+    "interrupt_flag_file" : "interrupt.flag",
+    "deploy_done_flag_file" : "deploy.done",
+    "current_job_file" : "current.job",
+    "skip_regression" : false,
+    "check_deploy_delay_minutes" : 30,
+    "extra_library":
+    {
+        "lib_url": "http://scbu_release/wenx/script_for_release_team/-/raw/master/common/service/email/lib/",
+        "hash_url": "http://scbu_release/wenx/script_for_release_team/-/raw/master/common/service/email/lib/md5sum.txt?inline=false"
+    },
+    "mail":
+    {
+        "template" : "obr_template.html",
+        "mail_title": "OBB Plus VCN CCL Dialy Report",
+        "receiver_list" : ["test@test.com"],
+        "diag_portal_mail_first": true
+    },
+    "diag_portal":
+    {
+        "job_url" : "http://diag-portal/jobs/414"
+    },
+    "modules": [
+        {
+	    "name" :"VCN",
+            "cmd" : "perl test_regression.pl -log vcn -test ^vcn",
+            "result_file" : "vcn/CTESTLIST.txt",
+            "log_dir" : "vcn",
+            "parser": "ResultParserVCN",
+            "fail_threshold" :40
+        },
+        {
+	    "name" :"VCN_SECURE",
+            "cmd" : "perl test_regression_secure.pl  -log vcn_secure -test=^vcn_secure",
+            "result_file" : "vcn_secure/CTESTLIST.txt",
+            "log_dir" : "vcn_secure",
+            "parser": "ResultParserVCN",
+            "fail_threshold" : 10
+        }
+    ],
+    "logger":
+    {
+        "level": "debug",
+        "log_file" : "/var/log/ccl/ccl.log"
+    }
+}

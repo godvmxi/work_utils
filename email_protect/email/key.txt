@@ -1,0 +1,9 @@
+{
+    "mail":
+    {
+        "user" :"testtest@126.com",
+        "any_key" :"any_data you want to protect",
+        "passwd": "dddddddddddd"
+    }
+}
+

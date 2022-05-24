@@ -17,9 +17,10 @@ def get_args_parse():
     parser.add_argument('-th','--text_height', type=int, default=100, help="watermark text height")
     parser.add_argument('-prefix','--prefix', default="", help="watermarker prefix, such as AMD-0")
     parser.add_argument('-s','--show',help="show image one by one", action="store_true")
+    parser.add_argument('-sf','--skip_frames',type=int, default=0,help="skip n frames")
     parser.add_argument('-n','--frame_number',type=int, default=0,help="handle n frames")
-    parser.add_argument('-c','--codec_type',type=str, default='hevc',help="codec type")
-    parser.add_argument('-f','--font_file',type=str, default="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf",help="handle n frames")
+    parser.add_argument('-c','--codec_type',type=str, default='hevc',help="codec type: hevc/h264")
+    parser.add_argument('-f','--font_file',type=str, default="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf",help="font file type")
     return parser
 def add_watermark_to_frame(frame, txt, text_height, offset, fontname="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf"):
     ft = cv2.freetype.createFreeType2()
@@ -70,12 +71,17 @@ if __name__ == "__main__":
         fourcc = cv2.VideoWriter_fourcc(*'hvc1')
     else:
         print("only support h264/hevc")
+        sys.exit(0)
+    skip_frames = args.skip_frames
     
     video_output = cv2.VideoWriter(args.output, fourcc, 30.0, (input_width, input_height))
     if args.frame_number > 0 and args.frame_number < total_frames:
         total_frames = args.frame_number
         print("processing frame number is : ", total_frames)
-    for index in range(total_frames):
+    for index in range(total_frames + skip_frames):
+        if index < skip_frames:
+            print("skip frame {0}".format(index))
+            continue
         # set frame position
         #cap.set(cv2.CAP_PROP_POS_FRAMES,index)
         print("process frame: {0}".format(index) )

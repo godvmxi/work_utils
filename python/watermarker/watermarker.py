@@ -18,6 +18,7 @@ def get_args_parse():
     parser.add_argument('-prefix','--prefix', default="", help="watermarker prefix, such as AMD-0")
     parser.add_argument('-s','--show',help="show image one by one", action="store_true")
     parser.add_argument('-n','--frame_number',type=int, default=0,help="handle n frames")
+    parser.add_argument('-c','--codec_type',type=str, default='hevc',help="codec type")
     parser.add_argument('-f','--font_file',type=str, default="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf",help="handle n frames")
     return parser
 def add_watermark_to_frame(frame, txt, text_height, offset, fontname="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf"):
@@ -47,6 +48,8 @@ def add_watermark_to_frame(frame, txt, text_height, offset, fontname="/usr/share
     return frame
 
 if __name__ == "__main__":
+    print(cv2.__version__)
+    print(cv2.getBuildInformation())
     args = get_args_parse().parse_args()
     print(args)
     print(args.width)
@@ -58,8 +61,16 @@ if __name__ == "__main__":
     video_info = 'video : {0}x{1} frames:{2}'.format(input_width, input_height, total_frames)
     print(video_info)
     print("total frames :", total_frames)
-
-    fourcc = cv2.VideoWriter_fourcc(*'X264')
+    fourcc = None
+    if(args.codec_type == "h264"):
+        print("process h264 video")
+        fourcc = cv2.VideoWriter_fourcc(*'X264')
+    elif (args.codec_type == "hevc"):
+        print("process hevc video")
+        fourcc = cv2.VideoWriter_fourcc(*'hvc1')
+    else:
+        print("only support h264/hevc")
+    
     video_output = cv2.VideoWriter(args.output, fourcc, 30.0, (input_width, input_height))
     if args.frame_number > 0 and args.frame_number < total_frames:
         total_frames = args.frame_number
@@ -67,9 +78,10 @@ if __name__ == "__main__":
     for index in range(total_frames):
         # set frame position
         #cap.set(cv2.CAP_PROP_POS_FRAMES,index)
+        print("process frame: {0}".format(index) )
         ret, frame = cap.read()
         marker_text = '{0}{1:0>2}'.format(args.prefix, index)
-        add_watermark_to_frame(frame, marker_text,args.text_height, (args.offset_x, args.offset_y), args.font_file)
+        add_watermark_to_frame(frame, marker_text, args.text_height, (args.offset_x, args.offset_y), args.font_file)
         video_output.write(frame)
         if args.show:
             cv2.imshow("Video", frame)

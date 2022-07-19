@@ -1,0 +1,181 @@
+{
+   "version": "0.0.1",
+   "ha_uma_4k": true,
+   "enable_atc": true,
+   "enable_tbu_perf": true,
+   "enable_spc_uva": false,
+   "enable_smmu": false,
+   "enable_aic": false,
+   "bypass_il1": false,
+   "l2pad_config": 0,
+   "spc_wr_in_order": 0,
+   "spc_clock": 0,
+   "patch_address": true,
+   "replay_virt_addr": true,
+   "remap_hw_dev_id": false,
+   "host_staging_buffer_size": 64,
+   "enable_smmu_monitor": true,
+   "enable_efuse": true,
+   "didt": 0,
+   "p2p_topology_config_path" : "../configure/p2p_topo.json",
+   "tmpfs_path": "/dev/shm/br_diag/",
+   "choose": "1die_vcodec_all_on_config",
+   "platform": [
+      {
+         "name": "1die_spc_0001",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0x1",
+         "spc_mask_on_die1": "0x0",
+         "cp_dma_mask": "0x3fc"
+      },
+      {
+         "name": "1die_spc_ffff",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0xffff",
+         "spc_mask_on_die1": "0x0",
+         "cp_dma_mask": "0x3e0"
+      },
+      {
+         "name": "1die_spc_0400",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0x400",
+         "spc_mask_on_die1": "0x0",
+         "cp_dma_mask": "0x3fc",
+         "_comment": "master die: spc22"
+      },
+      {
+         "name": "1die_spc_0011",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0x11",
+         "spc_mask_on_die1": "0x0",
+         "cp_dma_mask": "0x3fc"
+      },
+      {
+         "name": "1die_spc_000f",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0xf",
+         "spc_mask_on_die1": "0x0",
+         "cp_dma_mask": "0x3fc"
+      },
+      {
+         "name": "2die_spc_0001_0001",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 5,
+         "die_num": 2,
+         "spc_mask_on_die0": "0x1",
+         "spc_mask_on_die1": "0x1",
+         "cp_dma_mask": "0x39c"
+      },
+      {
+         
+         "name": "2die_spc_0001_0400",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 5,
+         "die_num": 2,
+         "spc_mask_on_die0": "0x1",
+         "spc_mask_on_die1": "0x400",
+         "cp_dma_mask": "0x39c",
+         "_comment": "master die: spc00, slave die: spc22"
+      },
+      {
+         
+         "name": "2die_spc_0001_2000",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 5,
+         "die_num": 2,
+         "spc_mask_on_die0": "0x1",
+         "spc_mask_on_die1": "0x2000",
+         "cp_dma_mask": "0x39c",
+         "_comment": "master die: spc00, slave die: spc13"
+      },
+      {
+         "name": "1die_spc_1111",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0x1111",
+         "spc_mask_on_die1": "0x0",
+         "cp_dma_mask": "0x3fc"
+      },
+      {
+         "name": "1die_spc_8888",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0x8888",
+         "spc_mask_on_die1": "0x0",
+         "ha_uma_4k": true,
+         "cp_dma_mask": "0x3fc"
+      },
+      {
+         "name": "replay_4_spc",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0xf",
+         "spc_mask_on_die1": "0x0",
+         "cp_dma_mask": "0x3fc",
+         "enable_smmu": false,
+         "patch_address": false
+      },
+      {
+         "name": "P2P_2GPU_2U_PLATFORM",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0",
+         "spc_mask_on_die1": "0",
+         "cp_dma_mask": "0x3fc"
+      },
+      {
+         "name": "pld_no_l2_config",
+         "hbm_stack_num": 2,
+         "hbm_stack_starting_index": 0,
+         "noc_vmn": 4,
+         "die_num": 1,
+         "spc_mask_on_die0": "0",
+         "spc_mask_on_die1": "0",
+         "l2_mask_on_die0": "0",
+         "l2_mask_on_die1": "0",
+         "cp_dma_mask": "0x3fc"
+      },
+      {
+        "name": "1die_vcodec_all_on_config",
+        "hbm_stack_num": 2,
+        "hbm_stack_starting_index": 0,
+        "noc_vmn": 4,
+        "die_num": 1,
+        "spc_mask_on_die0": "0",
+        "spc_mask_on_die1": "0",
+        "l2_mask_on_die0": "0xFFFF",
+        "l2_mask_on_die1": "0",
+        "cp_dma_mask": "0x3fc",
+        "venc_mask_on_die0": "0xF",
+        "vdec_mask_on_die0": "0xFFFF",
+        "venc_mask_on_die1": "0xF",
+        "vdec_mask_on_die1": "0xFFFF"
+     }
+   ]
+}

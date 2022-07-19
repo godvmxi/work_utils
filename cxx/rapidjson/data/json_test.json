@@ -1,0 +1,140 @@
+{
+    "local_x": 512,
+    "local_y": 1,
+    "local_z": 1,
+    "tests": [
+        [
+            {
+                "name": "conv_32x3x3_32x8x8_fp32",
+                "path": "json_tests/conv_32x3x3_32x8x8_fp32/",
+                "spc_mask": "0x1",
+                "cwarp": 3,
+                "work_mode": 1,
+                "tlr_size": 63,
+                "kernel": "kernel_p0.bin",
+                "usharp": [
+                    {
+                        "name": "br-unit-fwd-U0-conv0-W-4DW-1x32x3x3-fp32-p0.bin",
+                        "mem_type": "NUMA",
+                        "pad_base": 0,
+                        "pad_size": 0,
+                        "l15Mode": 0,
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U1-conv0-A-3DA-1x32x8x8-fp32-p0.bin",
+                        "mem_type": "NUMA",
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U2-conv0-A-3DA-1x1x6x6-fp32-p0.bin",
+                        "mem_type": "NUMA",
+                        "compare": true
+                    }
+                ]
+            },
+            {
+                "name": "conv_32x3x3_32x8x8_fp32_byp",
+                "path": "json_tests/conv_32x3x3_32x8x8_fp32/",
+                "spc_mask": "0x1",
+                "cwarp": 3,
+                "work_mode": 1,
+                "tlr_size": 63,
+                "kernel": "kernel_p0_byp.s",
+                "usharp": [
+                    {
+                        "name": "br-unit-fwd-U0-conv0-W-4DW-1x32x3x3-fp32-p0.bin",
+                        "mem_type": "NUMA",
+                        "pad_base": 0,
+                        "pad_size": 0,
+                        "l15Mode": 0,
+                        "cacheble": false,
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U1-conv0-A-3DA-1x32x8x8-fp32-p0.bin",
+                        "mem_type": "NUMA",
+                        "cacheble": false,
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U2-conv0-A-3DA-1x1x6x6-fp32-p0.bin",
+                        "mem_type": "NUMA",
+                        "cacheble": false,
+                        "compare": true
+                    }
+                ]
+            },
+            {
+                "name": "mma_512x1024_1024x512_bf16",
+                "path": "json_tests/mma_512x1024_1024x512_bf16/",
+                "spc_mask": "0x1",
+                "cwarp": 3,
+                "work_mode": 1,
+                "tlr_size": 63,
+                "kernel": "kernel.bin",
+                "usharp": [
+                    {
+                        "name": "br-unit-fwd-U0-mma-W-2DW-1x1x1024x512-bf16.bin",
+                        "mem_type": "NUMA",
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U1-mma-A-2DA-1x1x512x1024-bf16.bin",
+                        "mem_type": "NUMA",
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U2-mma-A-2DA-1x1x1024x1024-bf16.bin",
+                        "mem_type": "NUMA",
+                        "compare": true
+                    }
+                ]
+            },
+            {
+                "name": "mma_4x8_8x8_fp32",
+                "path": "json_tests/mma_4x8_8x8_fp32/",
+                "spc_mask": "0x1",
+                "cwarp": 3,
+                "work_mode": 1,
+                "tlr_size": 63,
+                "kernel": "kernel.bin",
+                "usharp": [
+                    {
+                        "name": "br-unit-fwd-U0-mma-W-2DW-1x1x4x8-fp32.bin",
+                        "mem_type": "NUMA",
+                        "num_sub_usharp": 0,
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U1-mma-A-2DA-1x1x8x8-fp32.bin",
+                        "mem_type": "NUMA",
+                        "num_sub_usharp": 0,
+                        "compare": false
+                    },
+                    {
+                        "name": "br-unit-fwd-U2-mma-A-2DA-1x1x4x8-fp32.bin",
+                        "mem_type": "NUMA",
+                        "num_sub_usharp": 0,
+                        "compare": true
+                    }
+                ]
+            },
+            {
+                "name": "cbr_k3_perf",
+                "path": "json_tests/cbr_k3_perf",
+                "subtest": true
+            },
+            {
+                "name": "maxpool019",
+                "path": "json_tests/maxpool019",
+                "subtest": true
+            },
+            {
+                "name": "cbr_k7_maxpool",
+                "path": "json_tests/cbr_k7_maxpool",
+                "subtest": false
+            }
+        ]
+    ]
+}

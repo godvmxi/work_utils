@@ -1,0 +1,46 @@
+{
+    "version":"0.0.1",
+    "ha_uma_4k":true,
+    "enable_spc_uva":false,
+    "l2pad_config":0,
+    "spc_list_int":[1,2,3,4,5],
+    "spc_list_float":[1.1,2.2,3.3,4.4,5.5],
+    "spc_list_str":["s1","s2", "s3"],
+    "spc_list_bool":[true, false, true],
+    "spc_clock":0.112,
+    "host_staging_buffer_size":64,
+    "dict_test":{
+        "die_num":1,
+        "spc_mask_on_die0":"0x1",
+        "spc_mask_on_die1":"0x0",
+        "cp_dma_mask":"0x3fc",
+        "sub_dict":[{
+            "die_num":1,
+            "spc_mask_on_die0":"0x1",
+            "spc_mask_on_die1":"0x0",
+            "cp_dma_mask":"0x3fc",
+            "spc_clock":0.113
+         },
+         {
+            "die_num":2,
+            "spc_mask_on_die0":"0x2",
+            "spc_mask_on_die1":"0x1",
+            "cp_dma_mask":"0x3ff",
+            "spc_clock":0.114
+         }
+        ]
+     },
+    "p2p_topology_config_path":"../configure/p2p_topo.json",
+    "tmpfs_path":"/dev/shm/br_diag/",
+    "choose":"1die_vcodec_all_on_config",
+    "platform":[
+       {
+          "name":"1die_spc_0001",
+          "hbm":2
+       },
+       {
+          "name":"1die_spc_ffff",
+          "hbm":3
+       }
+    ]
+ }

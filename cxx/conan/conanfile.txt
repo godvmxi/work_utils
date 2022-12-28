@@ -1,5 +1,8 @@
 [requires]
 gtest/1.10.0
+zlib/1.2.13
+boost/1.81.0
+libqrencode/4.1.1
 
 [generators]
 cmake
